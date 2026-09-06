@@ -1,0 +1,757 @@
+<title>Moggle Fluff-a-kin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=Vollkorn:ital,wght@0,600;0,700;1,600&display=swap">
+<style>
+:root{
+  --ground:#e4e7dd;
+  --surface:#f3f5ed;
+  --sunk:#dbdfd2;
+  --ink:#191d16;
+  --soft:#5a6350;
+  --line:#c4cab9;
+  --accent:#4b3d73;
+  --accent-wash:#e9e5f2;
+  --warn:#8e3f27;
+  --warn-wash:#f2e3dc;
+  --display:"Vollkorn",Georgia,"Times New Roman",serif;
+  --body:"Alegreya Sans","Helvetica Neue",Arial,sans-serif;
+  --data:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#12150f; --surface:#1b1f18; --sunk:#252a21;
+    --ink:#e1e6d7; --soft:#98a28f; --line:#333a2d;
+    --accent:#b4a5e0; --accent-wash:#241f36;
+    --warn:#e09070; --warn-wash:#33201a;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#12150f; --surface:#1b1f18; --sunk:#252a21;
+  --ink:#e1e6d7; --soft:#98a28f; --line:#333a2d;
+  --accent:#b4a5e0; --accent-wash:#241f36;
+  --warn:#e09070; --warn-wash:#33201a;
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:16px;
+  line-height:1.55;
+  padding:0 20px 72px;
+}
+.sheet{max-width:1320px;margin:0 auto}
+
+/* ---- page layout: tracker left, everything else right ---- */
+.layout{display:grid;grid-template-columns:360px 1fr;gap:36px;align-items:start;margin-top:30px}
+.right{min-width:0}
+@media (max-width:1180px){
+  .layout{grid-template-columns:1fr;gap:28px}
+}
+
+/* ---- masthead ---- */
+.masthead{padding:56px 0 28px;border-bottom:2px solid var(--ink);display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center}
+.eyebrow{
+  font-family:var(--data);font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent);margin:0 0 14px;
+}
+h1{
+  font-family:var(--display);font-weight:700;font-size:clamp(38px,7vw,66px);
+  line-height:1.02;margin:0;text-wrap:balance;letter-spacing:-.01em;
+}
+h1 .blank{
+  color:var(--soft);font-style:italic;font-weight:600;
+  border-bottom:2px dotted var(--line);
+}
+.dramatis{
+  display:flex;flex-wrap:wrap;gap:0 28px;margin-top:22px;
+  font-family:var(--data);font-size:12.5px;color:var(--soft);
+}
+.dramatis b{color:var(--ink);font-weight:600}
+
+/* ---- callout ---- */
+.callout{
+  background:var(--accent-wash);border-left:3px solid var(--accent);
+  padding:20px 24px;margin:0;border-radius:0 4px 4px 0;
+}
+.callout h2{
+  font-family:var(--data);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 10px;font-weight:600;
+}
+.callout ol{margin:0;padding-left:20px}
+.callout li{margin-bottom:6px}
+.callout li:last-child{margin-bottom:0}
+.callout code,.roll{font-family:var(--data);font-size:.9em;font-weight:600}
+
+/* ---- two-column body ---- */
+.columns{display:grid;grid-template-columns:300px 1fr;gap:30px;margin-top:26px;align-items:start}
+@media (max-width:840px){.columns{grid-template-columns:1fr;gap:26px}}
+.rail{display:flex;flex-direction:column;gap:22px}
+.main{display:flex;flex-direction:column;gap:22px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:22px 24px}
+.card > h2{
+  font-family:var(--data);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--soft);margin:0 0 16px;font-weight:600;
+  padding-bottom:9px;border-bottom:1px solid var(--line);
+}
+.card h3{
+  font-family:var(--display);font-size:19px;font-weight:600;margin:0 0 4px;line-height:1.25;
+}
+.card p{margin:0 0 4px}
+.entry{margin-bottom:18px}
+.entry:last-child{margin-bottom:0}
+.entry .tag{
+  font-family:var(--data);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);display:block;margin-bottom:2px;
+}
+
+/* ---- ability table ---- */
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{
+  font-family:var(--data);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--soft);font-weight:500;text-align:right;padding:0 0 8px;
+}
+th:first-child{text-align:left}
+td{border-top:1px solid var(--line);padding:9px 0;text-align:right;font-family:var(--data);font-size:14px}
+td:first-child{
+  text-align:left;font-family:var(--body);font-size:15px;font-weight:500;letter-spacing:.02em;
+}
+td.was{color:var(--soft);text-decoration:line-through}
+td.same{color:var(--soft)}
+tr.flag td{color:var(--warn);font-weight:600}
+tr.prime td:first-child::after{
+  content:"prime";font-family:var(--data);font-size:9px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent);margin-left:7px;vertical-align:2px;
+}
+
+/* ---- stat rows ---- */
+.stat{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:9px 0;border-top:1px solid var(--line)}
+.stat:first-of-type{border-top:none;padding-top:0}
+.stat dt{font-weight:500}
+.stat dd{margin:0;font-family:var(--data);font-size:14px;font-variant-numeric:tabular-nums;text-align:right}
+.stat dd small{display:block;font-family:var(--body);font-size:12px;color:var(--soft);font-weight:400}
+dl{margin:0}
+.big{font-size:19px;font-weight:600}
+.fill{color:var(--soft);border-bottom:1px dotted var(--line);padding:0 16px}
+
+/* ---- hazard ---- */
+.hazard{background:var(--warn-wash);border:1px solid var(--warn);border-radius:5px;padding:20px 24px}
+.hazard h2{
+  font-family:var(--data);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--warn);margin:0 0 10px;font-weight:600;
+}
+.hazard p{margin:0 0 10px}
+.hazard p:last-child{margin:0}
+
+/* ---- kit list ---- */
+.kit{list-style:none;margin:0;padding:0}
+.kit li{padding:8px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px}
+.kit li:first-child{border-top:none;padding-top:0}
+.kit .num{font-family:var(--data);font-size:13px;color:var(--soft);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* ---- editable kit ---- */
+.kit-n{flex:1;min-width:0}
+.kit-r{display:flex;align-items:baseline;gap:10px;flex:none}
+.kit [contenteditable]{border-bottom:1px dotted transparent;cursor:text;outline:none}
+.kit [contenteditable]:hover{border-bottom-color:var(--line)}
+.kit [contenteditable]:focus{border-bottom-color:var(--accent);color:var(--ink)}
+.kit .num.auto{opacity:.7;cursor:default}
+.kit .drop{border:none;background:none;color:var(--line);cursor:pointer;
+  font-family:var(--data);font-size:16px;line-height:1;padding:0 2px}
+.kit li:hover .drop{color:var(--soft)}
+.kit .drop:hover{color:var(--warn)}
+
+.colophon{
+  margin-top:44px;padding-top:20px;border-top:1px solid var(--line);
+  font-size:13.5px;color:var(--soft);
+}
+.colophon a{color:var(--accent)}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* ---- pen and ink ---- */
+.ink{stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.ink .fine{stroke-width:1.4}
+.ink .solid{fill:currentColor;stroke:none}
+.ink .ground{fill:var(--ground)}
+
+.portrait{width:168px;height:auto;color:var(--ink)}
+@media (max-width:640px){
+  .masthead{grid-template-columns:1fr;justify-items:start}
+  .portrait{width:128px}
+}
+
+.divider{display:block;width:100%;max-width:400px;height:auto;margin:30px auto 0;color:var(--line)}
+.divider .solid{fill:var(--accent)}
+
+.card > h2::before{
+  content:"";display:inline-block;width:6px;height:6px;
+  background:var(--accent);transform:rotate(45deg);
+  margin-right:9px;vertical-align:2px;
+}
+
+.dropcap::first-letter{
+  font-family:var(--display);font-weight:700;font-size:3.2em;line-height:.8;
+  float:left;padding:7px 11px 0 0;color:var(--accent);
+}
+.dropcap::after{content:"";display:block;clear:both}
+
+.pips{display:inline-flex;gap:5px;margin-left:10px;vertical-align:3px}
+.pip{width:8px;height:8px;background:var(--warn);transform:rotate(45deg)}
+
+
+/* ---- play tracker ---- */
+.tracker{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:22px 24px;
+  position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto}
+@media (max-width:1180px){.tracker{position:static;max-height:none}}
+.tracker-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:18px}
+.tracker-head h2{font-family:var(--data);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--soft);margin:0;font-weight:600}
+.tracker-head h2::before{content:"";display:inline-block;width:6px;height:6px;background:var(--accent);
+  transform:rotate(45deg);margin-right:9px;vertical-align:2px}
+#savestate{font-family:var(--data);font-size:11px;letter-spacing:.05em;color:var(--soft)}
+#savestate[data-s="dirty"]{color:var(--warn)}
+#savestate[data-s="saved"]{color:var(--accent)}
+
+.gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:16px}
+.gauge{display:flex;flex-direction:column;gap:7px;min-width:0}
+.gauge label{font-family:var(--data);font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--soft)}
+.gauge small{font-size:11.5px;color:var(--soft);line-height:1.35;min-height:2.4em}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:30px;height:32px;flex:none;border:1px solid var(--line);background:var(--ground);
+  color:var(--ink);border-radius:4px;font-family:var(--data);font-size:15px;line-height:1;cursor:pointer}
+.stepper button:hover{border-color:var(--accent);color:var(--accent)}
+.stepper input{width:100%;min-width:0;padding:6px 4px;border:1px solid var(--line);border-radius:4px;
+  background:var(--ground);color:var(--ink);font-family:var(--data);font-size:16px;font-weight:600;
+  text-align:center;font-variant-numeric:tabular-nums;-moz-appearance:textfield}
+.stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.gauge.crit input{border-color:var(--warn);color:var(--warn)}
+
+.tracker-rows{display:grid;grid-template-columns:1fr;gap:22px;margin-top:22px;
+  padding-top:20px;border-top:1px solid var(--line)}
+.rowhead{font-family:var(--data);font-size:10px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--soft);margin:0 0 10px}
+.flagline{display:flex;align-items:center;gap:9px;padding:4px 0;font-size:14.5px}
+.flagline input[type=checkbox]{width:16px;height:16px;flex:none;accent-color:var(--accent)}
+.inline{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.inline input[type=text],.inline input[type=number]{flex:1;min-width:80px;padding:7px 10px;
+  border:1px solid var(--line);border-radius:4px;background:var(--ground);color:var(--ink);
+  font-family:var(--body);font-size:14.5px}
+.act{padding:7px 13px;border:1px solid var(--line);background:var(--ground);color:var(--ink);
+  border-radius:4px;font-family:var(--data);font-size:11.5px;letter-spacing:.05em;cursor:pointer;white-space:nowrap}
+.act:hover{border-color:var(--accent);color:var(--accent)}
+.tracker textarea{width:100%;min-height:96px;padding:9px 11px;border:1px solid var(--line);border-radius:4px;
+  background:var(--ground);color:var(--ink);font-family:var(--body);font-size:14.5px;line-height:1.5;resize:vertical}
+ul.trophies{list-style:none;margin:12px 0 0;padding:0}
+ul.trophies li{display:flex;justify-content:space-between;gap:12px;align-items:center;
+  padding:6px 0;border-top:1px solid var(--line);font-size:14.5px}
+ul.trophies li button{border:none;background:none;color:var(--soft);cursor:pointer;
+  font-family:var(--data);font-size:16px;line-height:1;padding:0 4px}
+ul.trophies li button:hover{color:var(--warn)}
+.empty{color:var(--soft);font-size:13.5px;margin-top:10px}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+</style>
+
+<div class="sheet">
+
+<header class="masthead">
+  <div>
+  <p class="eyebrow">Dolmenwood &middot; Level 1 &middot; 0 XP</p>
+  <h1>Moggle Fluff&#8209;a&#8209;kin</h1>
+  <div class="dramatis">
+    <span>Kindred <b>Grimalkin</b></span>
+    <span>Class <b>Hunter</b></span>
+    <span>Combat aptitude <b>Martial</b></span>
+    <span>Alignment <b>Neutral</b></span>
+    <span>XP modifier <b>&minus;20%</b></span>
+    <span>Age <b>999</b></span>
+    <span>Height <b>3&prime;6&Prime;</b></span>
+    <span>Max level <b>14</b></span>
+  </div>
+  </div>
+
+  <svg class="portrait ink" viewBox="0 0 200 214" role="img" aria-labelledby="portrait-title">
+    <title id="portrait-title">Ink drawing of a snub-nosed cat with long ear tufts, wrapped in a hooded cloak</title>
+    <path d="M64 119 C44 132 31 160 27 206 L173 206 C169 160 156 132 136 119"/>
+    <path class="fine" d="M72 154 L64 206"/>
+    <path class="fine" d="M100 150 L100 206"/>
+    <path class="fine" d="M128 154 L136 206"/>
+    <g class="fine">
+      <path d="M38 188 L49 184"/><path d="M36 195 L49 191"/><path d="M35 201 L49 198"/>
+      <path d="M151 184 L162 188"/><path d="M151 191 L164 195"/><path d="M151 198 L165 201"/>
+    </g>
+    <path class="ground" d="M58 58 L45 17 L84 38 Z"/>
+    <path class="ground" d="M142 58 L155 17 L116 38 Z"/>
+    <path d="M58 58 L45 17 L84 38"/>
+    <path d="M142 58 L155 17 L116 38"/>
+    <path class="ground" d="M100 33 C129 33 149 52 151 78 C153 105 132 125 100 125 C68 125 47 105 49 78 C51 52 71 33 100 33 Z"/>
+    <path d="M100 33 C129 33 149 52 151 78 C153 105 132 125 100 125 C68 125 47 105 49 78 C51 52 71 33 100 33 Z"/>
+    <g class="fine">
+      <path d="M48 27 L24 12"/><path d="M52 38 L20 28"/><path d="M56 49 L22 45"/>
+      <path d="M152 27 L176 12"/><path d="M148 38 L180 28"/><path d="M144 49 L178 45"/>
+    </g>
+    <path class="fine" d="M73 78 C79 67 92 67 97 78 C92 89 79 89 73 78 Z"/>
+    <path class="fine" d="M103 78 C108 67 121 67 127 78 C121 89 108 89 103 78 Z"/>
+    <ellipse class="solid" cx="85" cy="78" rx="2.6" ry="7"/>
+    <ellipse class="solid" cx="115" cy="78" rx="2.6" ry="7"/>
+    <path class="solid" d="M93 97 L107 97 L100 106 Z"/>
+    <path class="fine" d="M100 106 C100 115 92 119 85 114"/>
+    <path class="fine" d="M100 106 C100 115 108 119 115 114"/>
+    <g class="fine">
+      <path d="M77 107 L38 99"/><path d="M77 112 L36 114"/><path d="M78 117 L42 128"/>
+      <path d="M123 107 L162 99"/><path d="M123 112 L164 114"/><path d="M122 117 L158 128"/>
+    </g>
+    <path class="fine" d="M67 122 C80 138 120 138 133 122"/>
+  </svg>
+</header>
+
+<svg class="divider ink" viewBox="0 0 400 26" aria-hidden="true" focusable="false">
+  <path class="fine" d="M6 13 C46 3 76 23 116 13 S176 3 200 13 S254 23 294 13 S354 3 394 13"/>
+  <g class="fine">
+    <path d="M62 8 L58 2"/><path d="M98 19 L102 25"/>
+    <path d="M154 8 L150 2"/><path d="M248 19 L252 25"/>
+    <path d="M306 8 L302 2"/><path d="M342 19 L346 25"/>
+  </g>
+  <path class="solid" d="M200 5 L206 13 L200 21 L194 13 Z"/>
+</svg>
+
+
+<div class="layout">
+<div class="left">
+<section class="tracker">
+  <div class="tracker-head">
+    <h2>Play tracker</h2>
+    <span id="savestate" data-s="idle">loading</span>
+  </div>
+  <div id="tracker-body" data-dyn></div>
+</section>
+</div>
+
+<div class="right">
+
+<div class="callout">
+  <h2>Ready to play</h2>
+  <p style="margin:0">Everything on this sheet is settled. Two things to raise with your referee before session one: whether the jet black wools are worth a bonus on a night-time Stalking roll, and whether zero hit points means dead or whether they use a death&rsquo;s door rule. The second one matters more to you than to anyone else at the table.</p>
+</div>
+
+<div class="columns">
+
+  <div class="rail">
+
+    <section class="card">
+      <h2>Ability scores</h2>
+      <table>
+        <thead>
+          <tr><th>Ability</th><th>Score</th><th>Mod</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Strength</td><td>12</td><td class="same">&mdash;</td></tr>
+          <tr><td>Intelligence</td><td>9</td><td class="same">&mdash;</td></tr>
+          <tr><td>Wisdom</td><td>10</td><td class="same">&mdash;</td></tr>
+          <tr class="prime"><td>Dexterity</td><td>10</td><td class="same">&mdash;</td></tr>
+          <tr class="prime flag"><td>Constitution</td><td>5</td><td>&minus;2</td></tr>
+          <tr><td>Charisma</td><td>11</td><td class="same">&mdash;</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:14px;font-size:13.5px;color:var(--soft)">Rolled straight down, kept as rolled. If you ever want it, creation step 4 lets you drop a non-prime score by 2 to raise a prime by 1, with a floor of 9. Strength 12&rarr;9 and Wisdom 10&rarr;9 would buy Constitution up to 7, halving both the hit point loss and the XP penalty, and neither score would change its modifier.</p>
+    </section>
+
+    <section class="card">
+      <h2>Combat</h2>
+      <dl>
+        <div class="stat"><dt>Hit points</dt><dd class="big"><span id="hp-mirror" data-dyn></span><small>rolled 4 on d8, &minus;2 for Constitution. Change it in the tracker.</small></dd></div>
+        <div class="stat"><dt>Armour class</dt><dd class="big">12<small>bow up; 13 with dagger and shield<br>add +2 against Large creatures</small></dd></div>
+        <div class="stat"><dt>Attack bonus</dt><dd class="big">+1<small>+2 with missile weapons</small></dd></div>
+        <div class="stat"><dt>Magic resistance</dt><dd class="big">+2<small>grimalkin, applies to spell saves</small></dd></div>
+      </dl>
+    </section>
+
+    <section class="card">
+      <h2>Saving throws</h2>
+      <dl>
+        <div class="stat"><dt>Doom</dt><dd>12</dd></div>
+        <div class="stat"><dt>Ray</dt><dd>13</dd></div>
+        <div class="stat"><dt>Hold</dt><dd>14</dd></div>
+        <div class="stat"><dt>Blast</dt><dd>15</dd></div>
+        <div class="stat"><dt>Spell</dt><dd>16</dd></div>
+      </dl>
+      <p style="margin-top:14px;font-size:13.5px;color:var(--soft)">Roll d20, meet or beat the target.</p>
+    </section>
+
+    <section class="card">
+      <h2>Skills</h2>
+      <dl>
+        <div class="stat"><dt>Listen</dt><dd>5<small>grimalkin &middot; 33%</small></dd></div>
+        <div class="stat"><dt>Survival</dt><dd>5<small>hunter &middot; 33%</small></dd></div>
+        <div class="stat"><dt>Tracking</dt><dd>5<small>hunter &middot; 33%</small></dd></div>
+        <div class="stat"><dt>Search</dt><dd>6<small>default &middot; 17%</small></dd></div>
+        <div class="stat"><dt>Alertness</dt><dd>6<small>hunter &middot; 17%</small></dd></div>
+        <div class="stat"><dt>Stalking</dt><dd>6<small>hunter &middot; 17%</small></dd></div>
+      </dl>
+      <p style="margin-top:14px;font-size:13.5px;color:var(--soft)">Roll d6 plus any situational modifier and meet or beat the target. Ability modifiers do not apply. A natural 1 always fails and a natural 6 always succeeds whatever the modifiers, so no skill is ever better than 5-in-6 or worse than 1-in-6.</p>
+      <p style="margin-top:10px;font-size:13.5px;color:var(--soft)">Listen, Search and Survival are skills every character has, and everything defaults to a target of 6 unless your kindred or class lowers it. Listen is grimalkin. The other four are the hunter&rsquo;s. Tracking improves to 4 at level 3, Stalking to 5 at level 4, Alertness not for a good while.</p>
+      <p style="margin-top:10px;font-size:13.5px;color:var(--soft)">Ability checks work differently: d6 plus that ability&rsquo;s modifier against a fixed target of 4.</p>
+    </section>
+
+    <section class="card">
+      <h2>Particulars</h2>
+      <dl>
+        <div class="stat"><dt>Height</dt><dd>3&prime;6&Prime;<small>as tall as a grimalkin gets</small></dd></div>
+        <div class="stat"><dt>Age</dt><dd>999 years<small>and unbothered by it</small></dd></div>
+        <div class="stat"><dt>Languages</dt><dd>Woldish, Mewl<small>plus the Neutral tongue</small></dd></div>
+      </dl>
+    </section>
+
+  </div>
+
+  <div class="main">
+
+    <section class="hazard">
+      <h2>Read this first</h2>
+      <p>Constitution 5 is the defining fact of this character. You lose 2 hit points per level for the whole of your career, and if the d8 comes up 1, 2 or 3 you start play on a single hit point. A goblin with a rock can end you. It also costs you 20% of all XP earned, because Constitution is one of the hunter&rsquo;s two prime abilities.</p>
+      <p>Play accordingly. Stay at bowshot. Let the animal companion scout. Do not be the one who opens the door.</p>
+    </section>
+
+    <section class="card">
+      <h2>Kit</h2>
+      <div id="kit-body" data-dyn></div>
+      <p style="margin-top:14px;font-size:13.5px;color:var(--soft)">Click any line to rewrite it, use the cross to drop something, and add new gear at the bottom. Arrows and coin are kept in the play tracker, so those two lines follow it and cannot be edited here.</p>
+      <p style="margin-top:16px;font-size:13.5px;color:var(--soft)">The clothes, backpack and belt pouch are what every character starts with. The armour, shield, bow and dagger are a legal hunter equipment roll. The bow needs both hands, so the shield is only on your arm when the bow is stowed and the dagger is out. Decide which one you are holding at the start of each fight rather than mid-round. Custom-fitted armour for a grimalkin takes 2d6 days to make or alter.</p>
+      <p style="margin-top:12px;font-size:13.5px;color:var(--soft)">Chisel, sledgehammer, shovel, ink and quill. That is a barrow-digging kit with a notebook attached, in a wood named after its standing stones. Play it as deliberate. Watch it against your encumbrance too, because a hammer and a shovel together are a great deal of iron for a three-foot cat, and speed is most of what keeps you alive.</p>
+      <p style="margin-top:12px;font-size:13.5px;color:var(--soft)">The whistle is audible to every living thing except dogs. Nobody has yet found the use for it. Somebody will.</p>
+    </section>
+
+    <section class="card">
+      <h2>What a grimalkin is</h2>
+      <p class="dropcap" style="margin-bottom:18px">A fairy cat wearing a small humanoid shape. You stand about three feet tall, you are immortal in the sense that nothing natural will kill you, and no ordinary disease can touch you. You are also small enough that most of the woods is Large, which is why your armour class improves against big things.</p>
+
+      <div class="entry">
+        <span class="tag">Chester form</span>
+        <h3>Turn into a fat house cat</h3>
+        <p>No limit on how often. In this shape you have AC 12 and attacks that do 1 point of damage each. You cannot use weapons, glamours, or hunter skills while you are a cat, and you can only shift back when nothing sentient is watching. It is a scouting and hiding tool, not a combat one.</p>
+      </div>
+
+      <div class="entry">
+        <span class="tag">Wilder form</span>
+        <h3>Once a day, when you are nearly dead</h3>
+        <p>Available only when you drop below half hit points. You heal <span class="roll">2d6</span> immediately, get AC 13, a +2 attack bonus and 1d4 damage, and it lasts <span class="roll">2d4</span> rounds. The catch is that you cannot tell friend from enemy. Warn the party before you use it.</p>
+        <p style="margin-top:10px;color:var(--warn)">On 2 hit points you cannot reach the trigger. Half of 2 is 1, so &ldquo;below half&rdquo; means 0, and 0 is dead. This ability switches on at level 2 and stays off until then. Ask your referee whether they will read the trigger as 1 hit point or fewer.</p>
+      </div>
+
+      <div class="entry">
+        <span class="tag">Glamour</span>
+        <h3>Fool&rsquo;s Gold</h3>
+        <p>Touch copper coins and they look like gold to mortals. Range is whatever you touch. It lasts <span class="roll">1d6</span> minutes. Any mortal who looks at the coins may Save Versus Spell to see the trick for what it is, and other fairies are not fooled at all.</p>
+        <p style="margin-top:8px">You may glamour <b>20 coins per day per level</b>, so 20 a day right now. Rolled 10 on the fairy magic table.</p>
+        <p style="margin-top:8px">Like every glamour it needs no words or gestures, cannot be disrupted, and costs your action for the round.</p>
+        <p style="margin-top:8px;color:var(--soft)">Worth saying plainly: this does nothing in a fight. It is a swindler&rsquo;s tool with a 1d6 minute fuse, which means the plan has to include being somewhere else when it lapses. For a cat with 7 gold and a shovel, that is probably the right kind of problem.</p>
+      </div>
+
+      <div class="entry">
+        <span class="tag">Odds and ends</span>
+        <h3>Cold iron, and giant rats</h3>
+        <p>Cold iron weapons do 1 extra damage to you, which on your hit point total is a genuine threat rather than a footnote. On the other side of the ledger: eat a giant rodent over the course of a turn and you get a hit point back. It is not dignified. Take it anyway.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>What a hunter does</h2>
+
+      <div class="entry">
+        <span class="tag">Combat aptitude: martial</span>
+        <h3>You fight. You do not cast.</h3>
+        <p>The book files the hunter under martial, the same bracket as the fighter and the knight. That is why you start on a +1 attack bonus while a thief or a magician starts on +0, and why you may carry any weapon that is not Large. Nothing in your class advancement is spellcasting. The one piece of magic you own is the glamour, and that comes from your kindred, not your class.</p>
+        <p style="margin-top:8px">Level 2 costs 2,250 XP. At your &minus;20% that means 2,813 awarded before it lands, and it is the level where wilder form finally switches on.</p>
+      </div>
+
+      <div class="entry">
+        <span class="tag">Animal companion</span>
+        <h3>Bond with a beast</h3>
+        <p>Make a Charisma check to win an animal over: roll d6, add your Charisma modifier, and you need 4 or more. Your modifier is 0, so it is a flat coin toss. One companion at a time, and it is loyal. With your hit points this is the closest thing you have to a front line, so choose something that can take a hit.</p>
+      </div>
+
+      <div class="entry">
+        <span class="tag">Missile bonus</span>
+        <h3>+1 to hit with anything you throw or shoot</h3>
+        <p>Stacked with your class attack bonus that is +2 with a bow. The hunter&rsquo;s equipment entry settles the question of longbows for you: Small characters take a shortbow in place of one, so a shortbow it is. 1d6 damage at 50, 100 and 150 feet.</p>
+      </div>
+
+      <div class="entry">
+        <span class="tag">Trophies</span>
+        <h3>Take something from what you kill</h3>
+        <p>Harvested trophies grant combat bonuses later. Start keeping a list on the back of this sheet from your first session.</p>
+      </div>
+
+      <div class="entry">
+        <span class="tag">Four skills</span>
+        <h3>The reason the party brings you</h3>
+        <p>Alertness and Stalking start at 6, and Tracking and Survival at 5. Survival is a skill every character has; the hunter is the one who gets better at it. These are the rolls that turn a trackless wood into somewhere you can navigate, so make them constantly rather than saving them for emergencies.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Appearance and bearing</h2>
+      <p class="dropcap">Violet fur, a snub nose, and ear tufts nobody would call modest. The black wools do nothing for your armour class and a great deal for your outline after dark. Ask your referee whether they are worth something on a Stalking roll at night; the rules do not say, and most referees will give you it.</p>
+      <p style="margin-top:10px">Fastidious is the word people use. You groom before a fight and again after it, and you will not sleep in a wet cloak. Keep playing that. A habit the referee can reach for is worth more at the table than a line on the sheet.</p>
+    </section>
+
+  </div>
+</div>
+
+</div>
+</div>
+
+<svg class="divider ink" viewBox="0 0 400 26" aria-hidden="true" focusable="false" style="margin-top:40px">
+  <path class="fine" d="M6 13 C46 23 76 3 116 13 S176 23 200 13 S254 3 294 13 S354 23 394 13"/>
+  <path class="solid" d="M200 5 L206 13 L200 21 L194 13 Z"/>
+</svg>
+
+<p class="colophon">Built from the <a href="https://www.dolmenwood.necroticgnome.com/rules/doku.php?id=grimalkin">Dolmenwood Online Rules Reference</a> (Necrotic Gnome). Blanks are for you and your referee to fill in at the table.</p>
+
+</div>
+
+<script type="application/json" id="state">{"hp":2,"hpMax":2,"xp":0,"level":1,"gold":5,"arrows":20,"wilder":false,"coins":0,"trophies":[],"notes":"","kit":[{"n":"Leather armour, cut down to a cat’s frame","t":"AC 12 · light"},{"n":"Shield","t":"+1 AC"},{"n":"Shortbow","t":"1d6 · two-handed"},{"n":"Arrows","t":"","auto":"arrows"},{"n":"Dagger","t":"1d4 · small"},{"n":"Common clothes, under jet black wools","t":""},{"n":"Backpack: 2 preserved rations, waterskin, tinder box","t":""},{"n":"Belt pouch","t":"","auto":"gold"},{"n":"A whistle only dogs cannot hear","t":""},{"n":"Chisel","t":"no. 3"},{"n":"Sledgehammer","t":"no. 16"},{"n":"Ink, quill, 5 sheets of paper","t":"no. 8"},{"n":"Shovel","t":"no. 15"},{"n":"Bedroll","t":""}]}</script>
+<script>
+(function(){
+"use strict";
+var XP=[null,0,2250,4500,9000,18000,36000,72000,144000,290000,420000,550000,680000,810000,940000];
+var RATE=0.8;
+var D={hp:2,hpMax:2,xp:0,level:1,gold:7,arrows:20,wilder:false,coins:0,trophies:[],notes:"",kit:[
+  {n:"Leather armour, cut down to a cat\u2019s frame",t:"AC 12 \u00b7 light"},
+  {n:"Shield",t:"+1 AC"},
+  {n:"Shortbow",t:"1d6 \u00b7 two-handed"},
+  {n:"Arrows",t:"",auto:"arrows"},
+  {n:"Dagger",t:"1d4 \u00b7 small"},
+  {n:"Common clothes, under jet black wools",t:""},
+  {n:"Backpack: 2 preserved rations, waterskin, tinder box",t:""},
+  {n:"Belt pouch",t:"",auto:"gold"},
+  {n:"A whistle only dogs cannot hear",t:""},
+  {n:"Chisel",t:"no. 3"},
+  {n:"Sledgehammer",t:"no. 16"},
+  {n:"Ink, quill, 5 sheets of paper",t:"no. 8"},
+  {n:"Shovel",t:"no. 15"}
+]};
+var s,api=null,writable=true,timer=null,saving=false,queued=false;
+
+function el(id){return document.getElementById(id);}
+function esc(v){return String(v).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function n(v,f){v=parseInt(v,10);return isNaN(v)?f:v;}
+
+try{s=Object.assign({},D,JSON.parse((el("state")||{}).textContent||"{}"));}
+catch(e){s=Object.assign({},D);}
+if(!Array.isArray(s.trophies))s.trophies=[];
+if(typeof s.notes!=="string")s.notes="";
+s.kit=(Array.isArray(s.kit)?s.kit:D.kit).map(function(x){
+  var o={n:String((x&&x.n)||""),t:String((x&&x.t)||"")};
+  if(x&&x.auto)o.auto=String(x.auto);
+  return o;
+}).filter(function(x){return x.n;});
+
+function status(k,msg){var x=el("savestate");if(x){x.setAttribute("data-s",k);x.textContent=msg;}}
+
+function gauge(k,label,hint,crit){
+  return '<div class="gauge'+(crit?" crit":"")+'">'
+    +'<label for="f-'+k+'">'+label+'</label>'
+    +'<div class="stepper">'
+    +'<button type="button" data-step="-1" data-k="'+k+'" aria-label="decrease '+label+'">&minus;</button>'
+    +'<input id="f-'+k+'" type="number" inputmode="numeric" data-k="'+k+'" value="'+s[k]+'" aria-label="'+label+'">'
+    +'<button type="button" data-step="1" data-k="'+k+'" aria-label="increase '+label+'">+</button>'
+    +'</div><small>'+hint+'</small></div>';
+}
+
+function render(){
+  var nx=s.level<14?XP[s.level+1]:null;
+  var need=nx===null?"maximum level":Math.max(0,Math.ceil((nx-s.xp)/RATE)).toLocaleString()+" more awarded to reach level "+(s.level+1);
+  var cap=20*s.level;
+
+  var g='<div class="gauges">'
+    +gauge("hp","Hit points","of "+s.hpMax+" max"+(s.hp<=0?". You are down.":(s.hp<=1?". One hit from gone.":"")),s.hp<=1)
+    +gauge("hpMax","Max hit points","add 1d8 &minus; 2, minimum 1, each level")
+    +gauge("arrows","Arrows","shortbow, 1d6, 50/100/150 ft")
+    +gauge("gold","Gold","in the belt pouch")
+    +gauge("level","Level",nx===null?"maximum":"next at "+nx.toLocaleString()+" xp")
+    +gauge("xp","Experience","banked. "+need)
+    +'</div>';
+
+  var daily='<div><p class="rowhead">Once per day</p>'
+    +'<label class="flagline"><input type="checkbox" data-flag="wilder"'+(s.wilder?" checked":"")+'> Wilder form used'
+    +(s.hpMax<3?' <span style="color:var(--warn)">(unreachable at '+s.hpMax+' max hp)</span>':'')+'</label>'
+    +'<div class="flagline">Fool&rsquo;s Gold: '+s.coins+' of '+cap+' coins glamoured</div>'
+    +'<div class="inline">'
+    +'<button class="act" type="button" data-coins="20">+20 coins</button>'
+    +'<button class="act" type="button" data-coins="-20">&minus;20</button>'
+    +'<button class="act" type="button" data-act="newday">New day</button>'
+    +'</div>'
+    +'<div class="inline"><input type="number" id="award" placeholder="xp awarded" inputmode="numeric">'
+    +'<button class="act" type="button" data-act="award">Bank at &minus;20%</button></div>'
+    +'</div>';
+
+  var tro='<div><p class="rowhead">Trophies</p>';
+  if(s.trophies.length){
+    tro+='<ul class="trophies">';
+    for(var i=0;i<s.trophies.length;i++){
+      tro+='<li><span>'+esc(s.trophies[i])+'</span><button type="button" data-drop="'+i+'" aria-label="remove">&times;</button></li>';
+    }
+    tro+='</ul>';
+  } else {
+    tro+='<p class="empty">Nothing taken yet.</p>';
+  }
+  tro+='<div class="inline"><input type="text" id="trophy" placeholder="what you took, and from what">'
+    +'<button class="act" type="button" data-act="trophy">Add</button></div></div>';
+
+  var notes='<div style="grid-column:1/-1"><p class="rowhead">Notes</p>'
+    +'<textarea id="notes" placeholder="Rubbings taken, debts owed, things that know your name.">'+esc(s.notes)+'</textarea></div>';
+
+  el("tracker-body").innerHTML=g+'<div class="tracker-rows">'+daily+tro+notes+'</div>';
+
+  var m=el("hp-mirror");
+  if(m){
+    var pips="";
+    for(var j=0;j<Math.min(Math.max(s.hp,0),12);j++)pips+='<i class="pip"></i>';
+    m.innerHTML=s.hp+" / "+s.hpMax+'<span class="pips">'+pips+'</span>';
+  }
+  renderKit();
+}
+
+function renderKit(){
+  var box=el("kit-body");
+  if(!box)return;
+  var out='<ul class="kit">',i,it,note;
+  for(i=0;i<s.kit.length;i++){
+    it=s.kit[i];
+    note=it.auto==="gold"?(s.gold+" gp"):it.auto==="arrows"?(s.arrows+" in the quiver"):(it.t||"\u2014");
+    out+='<li><span class="kit-n" contenteditable="true" data-i="'+i+'" data-f="n">'+esc(it.n)+'</span>'
+      +'<span class="kit-r">'
+      +(it.auto
+        ?'<span class="num auto" title="kept in the play tracker">'+esc(note)+'</span>'
+        :'<span class="num" contenteditable="true" data-i="'+i+'" data-f="t">'+esc(note)+'</span>')
+      +'<button type="button" class="drop" data-kitdrop="'+i+'" aria-label="remove '+esc(it.n)+'">&times;</button>'
+      +'</span></li>';
+  }
+  out+='</ul><div class="inline"><input type="text" id="kit-n" placeholder="item">'
+    +'<input type="text" id="kit-t" placeholder="note, optional">'
+    +'<button class="act" type="button" data-act="kitadd">Add</button></div>';
+  box.innerHTML=out;
+}
+
+function dirty(){
+  status("dirty","unsaved");
+  clearTimeout(timer);
+  timer=setTimeout(save,1200);
+}
+
+function buildDoc(){
+  var c=document.documentElement.cloneNode(true);
+  var d=c.querySelectorAll("[data-dyn]");
+  for(var i=0;i<d.length;i++)d[i].innerHTML="";
+  var st=c.querySelector("#state");
+  if(st)st.textContent=JSON.stringify(s);
+  var ss=c.querySelector("#savestate");
+  if(ss){ss.setAttribute("data-s","idle");ss.textContent="loading";}
+  return "<!doctype html>\n"+c.outerHTML;
+}
+
+function save(){
+  if(!api||!writable)return;
+  if(saving){queued=true;return;}
+  saving=true;status("saving","saving");
+  api.publish(buildDoc()).then(function(){
+    saving=false;
+    if(queued){queued=false;save();}else status("saved","saved");
+  }).catch(function(err){
+    saving=false;queued=false;
+    var code=err&&err.code;
+    if(code==="not_granted"||code==="not_writer"){
+      writable=false;status("idle","read only. changes stay in this tab");
+    } else if(code==="conflict"){
+      status("dirty","another view saved first");
+    } else {
+      status("dirty","not saved");
+    }
+  });
+}
+
+document.addEventListener("click",function(e){
+  var t=e.target.closest("button");
+  if(!t)return;
+  if(t.dataset.kitdrop!==undefined){
+    s.kit.splice(n(t.dataset.kitdrop,0),1);renderKit();dirty();return;
+  }
+  if(t.dataset.act==="kitadd"){
+    var kn=el("kit-n"),kt=el("kit-t"),nm=kn?kn.value.trim():"",nt=kt?kt.value.trim():"";
+    if(nm){s.kit.push({n:nm,t:nt});renderKit();dirty();var f=el("kit-n");if(f)f.focus();}
+    return;
+  }
+  if(!el("tracker-body")||!el("tracker-body").contains(t))return;
+  if(t.dataset.step){
+    var k=t.dataset.k;s[k]=Math.max(k==="level"?1:0,n(s[k],0)+n(t.dataset.step,0));
+    if(k==="level")s.level=Math.min(14,s.level);
+    render();dirty();return;
+  }
+  if(t.dataset.coins){s.coins=Math.max(0,s.coins+n(t.dataset.coins,0));render();dirty();return;}
+  if(t.dataset.drop){s.trophies.splice(n(t.dataset.drop,0),1);render();dirty();return;}
+  var a=t.dataset.act;
+  if(a==="newday"){s.wilder=false;s.coins=0;render();dirty();}
+  else if(a==="award"){
+    var v=n((el("award")||{}).value,0);
+    if(v){s.xp=Math.max(0,s.xp+Math.round(v*RATE));render();dirty();}
+  }
+  else if(a==="trophy"){
+    var f=el("trophy"),txt=f?f.value.trim():"";
+    if(txt){s.trophies.push(txt);render();dirty();}
+  }
+});
+
+document.addEventListener("change",function(e){
+  var t=e.target;
+  if(t.dataset&&t.dataset.k){s[t.dataset.k]=Math.max(t.dataset.k==="level"?1:0,n(t.value,s[t.dataset.k]));render();dirty();}
+  else if(t.dataset&&t.dataset.flag){s[t.dataset.flag]=t.checked;render();dirty();}
+});
+
+document.addEventListener("input",function(e){
+  if(e.target.id==="notes"){s.notes=e.target.value;dirty();}
+});
+
+document.addEventListener("blur",function(e){
+  var t=e.target,i,v,f;
+  if(!t.dataset||t.dataset.i===undefined||!t.dataset.f)return;
+  i=n(t.dataset.i,-1);f=t.dataset.f;
+  if(i<0||!s.kit[i])return;
+  v=t.textContent.replace(/\s+/g," ").trim();
+  if(f==="t"&&(v==="\u2014"||v==="-"))v="";
+  if(f==="n"&&!v){t.textContent=s.kit[i].n;return;}
+  if(s.kit[i][f]===v)return;
+  s.kit[i][f]=v;dirty();
+},true);
+
+document.addEventListener("keydown",function(e){
+  if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.f){e.preventDefault();e.target.blur();return;}
+  if(e.key==="Enter"&&(e.target.id==="kit-n"||e.target.id==="kit-t")){
+    e.preventDefault();
+    var b=document.querySelector('[data-act="kitadd"]');
+    if(b)b.click();
+    return;
+  }
+  if(e.key==="Enter"&&(e.target.id==="trophy"||e.target.id==="award")){
+    e.preventDefault();
+    var b=document.querySelector('[data-act="'+(e.target.id==="trophy"?"trophy":"award")+'"]');
+    if(b)b.click();
+  }
+});
+
+render();
+
+if(window.claude&&typeof claude.use==="function"){
+  status("idle","connecting");
+  claude.use("artifact").then(function(a){
+    api=a;
+    status(a?"saved":"idle",a?"saved":"not saving. changes stay in this tab");
+  }).catch(function(){status("idle","not saving. changes stay in this tab");});
+} else {
+  status("idle","local copy. changes stay in this tab");
+}
+})();
+</script>
