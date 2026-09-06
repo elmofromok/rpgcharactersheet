@@ -23,6 +23,11 @@ node build.mjs moggle-fluff-a-kin  one
 
 No dependencies. Node 18 or later.
 
+Commit before you build. The page footer carries a build stamp naming the
+commit it came from, so a build from a dirty tree is labelled
+`+ uncommitted changes` on the published sheet. The stamp uses the commit's
+date rather than today's, so rebuilding the same commit gives the same stamp.
+
 The output in `dist/` is the page body, with no `<html>` or `<body>` wrapper,
 because that is what the Claude artifact publisher expects. It gets published
 to the URL in the character's `artifact` field.
@@ -49,8 +54,13 @@ Until that is fixed, publishing follows this order, and skipping the first step
 silently reverts whatever happened at the table:
 
 1. Read the live artifact and copy its state block into `characters/<id>.json`
-2. `node build.mjs <id>`
-3. Publish `dist/<id>.html` to the artifact URL
+2. Commit
+3. `node build.mjs <id>`
+4. Publish `dist/<id>.html` to the artifact URL
+
+If a published sheet ever looks wrong, read the build stamp in its footer
+first. It names the commit, and an old browser tab reports the build it was
+made from even after a session of saving itself.
 
 The fix is to move play state into the artifact's own database, so the page
 holds only the interface and publishing cannot touch the numbers. Not done yet.

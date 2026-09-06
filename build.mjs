@@ -8,8 +8,26 @@
 
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from "node:fs";
 import { basename } from "node:path";
+import { execFileSync } from "node:child_process";
 
 const REQUIRED = ["id", "name", "template", "start", "state"];
+
+// Names the commit this build came from, so a stale browser tab can be
+// identified on sight. Build the same commit twice and you get the same
+// stamp, because the date is the commit's rather than today's.
+function buildStamp() {
+  const git = (...args) => execFileSync("git", args, { encoding: "utf8" }).trim();
+  try {
+    const hash = git("rev-parse", "--short", "HEAD");
+    const date = new Date(git("show", "-s", "--format=%cI", "HEAD")).toLocaleDateString("en-GB", {
+      day: "numeric", month: "short", year: "numeric",
+    });
+    const dirty = git("status", "--porcelain") !== "" ? " + uncommitted changes" : "";
+    return `Build ${hash} \u00b7 ${date}${dirty}`;
+  } catch {
+    return "Unversioned build";
+  }
+}
 
 function build(file) {
   const character = JSON.parse(readFileSync(file, "utf8"));
@@ -22,13 +40,14 @@ function build(file) {
   }
 
   const template = readFileSync(`sheet/${character.template}`, "utf8");
-  for (const token of ["{{STATE}}", "{{START}}"]) {
+  for (const token of ["{{STATE}}", "{{START}}", "{{BUILD}}"]) {
     if (!template.includes(token)) throw new Error(`${character.template}: no ${token}`);
   }
 
   const html = template
     .replace("{{STATE}}", () => JSON.stringify(character.state))
-    .replace("{{START}}", () => JSON.stringify(character.start));
+    .replace("{{START}}", () => JSON.stringify(character.start))
+    .replace("{{BUILD}}", () => stamp);
 
   if (html.includes("{{")) throw new Error(`${character.id}: unreplaced token left in output`);
 
@@ -38,6 +57,7 @@ function build(file) {
   console.log(`${out}  ${html.length} bytes  ->  ${character.artifact ?? "not published yet"}`);
 }
 
+const stamp = buildStamp();
 const only = process.argv[2];
 const files = readdirSync("characters")
   .filter((f) => f.endsWith(".json"))
