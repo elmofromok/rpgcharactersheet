@@ -512,27 +512,13 @@ input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px soli
 
 </div>
 
-<script type="application/json" id="state">{"hp":2,"hpMax":2,"xp":0,"level":1,"gold":5,"arrows":20,"wilder":false,"coins":0,"trophies":[],"notes":"","kit":[{"n":"Leather armour, cut down to a cat’s frame","t":"AC 12 · light"},{"n":"Shield","t":"+1 AC"},{"n":"Shortbow","t":"1d6 · two-handed"},{"n":"Arrows","t":"","auto":"arrows"},{"n":"Dagger","t":"1d4 · small"},{"n":"Common clothes, under jet black wools","t":""},{"n":"Backpack: 2 preserved rations, waterskin, tinder box","t":""},{"n":"Belt pouch","t":"","auto":"gold"},{"n":"A whistle only dogs cannot hear","t":""},{"n":"Chisel","t":"no. 3"},{"n":"Sledgehammer","t":"no. 16"},{"n":"Ink, quill, 5 sheets of paper","t":"no. 8"},{"n":"Shovel","t":"no. 15"},{"n":"Bedroll","t":""}]}</script>
+<script type="application/json" id="state">{{STATE}}</script>
 <script>
 (function(){
 "use strict";
 var XP=[null,0,2250,4500,9000,18000,36000,72000,144000,290000,420000,550000,680000,810000,940000];
 var RATE=0.8;
-var D={hp:2,hpMax:2,xp:0,level:1,gold:7,arrows:20,wilder:false,coins:0,trophies:[],notes:"",kit:[
-  {n:"Leather armour, cut down to a cat\u2019s frame",t:"AC 12 \u00b7 light"},
-  {n:"Shield",t:"+1 AC"},
-  {n:"Shortbow",t:"1d6 \u00b7 two-handed"},
-  {n:"Arrows",t:"",auto:"arrows"},
-  {n:"Dagger",t:"1d4 \u00b7 small"},
-  {n:"Common clothes, under jet black wools",t:""},
-  {n:"Backpack: 2 preserved rations, waterskin, tinder box",t:""},
-  {n:"Belt pouch",t:"",auto:"gold"},
-  {n:"A whistle only dogs cannot hear",t:""},
-  {n:"Chisel",t:"no. 3"},
-  {n:"Sledgehammer",t:"no. 16"},
-  {n:"Ink, quill, 5 sheets of paper",t:"no. 8"},
-  {n:"Shovel",t:"no. 15"}
-]};
+var D={{START}};
 var s,api=null,writable=true,timer=null,saving=false,queued=false;
 
 function el(id){return document.getElementById(id);}
