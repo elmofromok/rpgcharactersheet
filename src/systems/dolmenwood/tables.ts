@@ -53,6 +53,8 @@ export type ClassLevel = {
 
 export type CharacterClass = {
   name: string;
+  /** The book's bracket: martial, arcane, holy. Decides what you may carry. */
+  aptitude: string;
   primeAbilities: Ability[];
   hitDie: number;
   /** From this level on, hit points are flat and Constitution stops applying. */
@@ -79,6 +81,7 @@ function saves(
  */
 export const HUNTER: CharacterClass = {
   name: "Hunter",
+  aptitude: "Martial",
   primeAbilities: ["con", "dex"],
   hitDie: 8,
   flatHitPointsFrom: 11,

@@ -12,28 +12,11 @@
 // replaces the artifact.
 
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from "node:fs";
-import { basename, join } from "node:path";
-import { execFileSync } from "node:child_process";
+import { join } from "node:path";
 
 import { hydrate, readCharacterFile } from "./src/characters/seed.ts";
 import { maxHitPoints } from "./src/systems/dolmenwood/rules.ts";
-
-// Names the commit this build came from, so a stale browser tab can be
-// identified on sight. Build the same commit twice and you get the same
-// stamp, because the date is the commit's rather than today's.
-function buildStamp() {
-  const git = (...args) => execFileSync("git", args, { encoding: "utf8" }).trim();
-  try {
-    const hash = git("rev-parse", "--short", "HEAD");
-    const date = new Date(git("show", "-s", "--format=%cI", "HEAD")).toLocaleDateString("en-GB", {
-      day: "numeric", month: "short", year: "numeric",
-    });
-    const dirty = git("status", "--porcelain") !== "" ? " + uncommitted changes" : "";
-    return `Build ${hash} · ${date}${dirty}`;
-  } catch {
-    return "Unversioned build";
-  }
-}
+import { buildStamp } from "./src/stamp.ts";
 
 // The play-state block the published page reads. Hit points per level are
 // computed now, so hpMax comes from the rules rather than from the file, and

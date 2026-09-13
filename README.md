@@ -16,12 +16,13 @@ Currently one character: Moggle Fluff-a-kin, a grimalkin hunter in Dolmenwood.
 characters/<id>.json    one character, written by hand: the seed the database is imported from
 sheet/<system>.html     the page: markup, styles, and the play tracker script
 src/systems/<system>/   the system rules: the tables, and what is computed from them
+src/systems/<system>/page/  the system page: the components that draw a sheet
 src/storage/            the database: every character, and every revision of one
 src/characters/         reading a character file, and the fallback chain
 src/import.ts           character file -> characters.db, once
 src/server.ts           the local server: owns the database, serves the sheet
 src/server/             the API, and serving the built page
-src/sheet/              the page itself, in TypeScript and Preact
+src/sheet/              the page shell, the stylesheet, and the vendored fonts
 build.mjs               character + template -> dist/<id>.html, for the artifact
 dist/                   build output, not committed
 ```
@@ -44,6 +45,27 @@ configure, and an edit to `src/sheet/` shows in the browser without a rebuild.
 Node 23.6 or later, which is what strips the types out of `src/` without a
 build step. TypeScript and Vite are dev dependencies; Preact is the only thing
 that ships.
+
+The page makes no request outside this machine. The three fonts are vendored
+into `src/sheet/fonts/` rather than loaded from Google, which is the same
+promise ADR-0001 makes about the character data. See
+[the licences](src/sheet/fonts/LICENSES.md).
+
+## The system page
+
+A system page plus a character makes a sheet. `src/systems/dolmenwood/page/`
+holds the components that draw one, and they hold no character of their own:
+every component takes the character and what the rules make of it.
+
+Prose divides the same way. Text true of every grimalkin or every hunter is a
+component. Text about one character is a note on that character, which is why
+`kindred.tsx` describes wilder form but says nothing about which glamour this
+particular cat rolled.
+
+Sentences that are only sometimes true are computed rather than written down.
+The warning that wilder form cannot be reached appears when maximum hit points
+are below 3 and disappears when they are not, instead of sitting on the page
+after it stops being true.
 
 ## The system rules
 
@@ -148,9 +170,10 @@ If a published sheet ever looks wrong, read the build stamp in its footer
 first. It names the commit, and an old browser tab reports the build it was
 made from even after a session of saving itself.
 
-The rules, the database, the import and the server all exist now. What is left
-is the page: the sheet itself still has to be written against them, which is
-the rest of issue #1. Until it is, the procedure above is the real one.
+The local sheet now reads, and shows every number computed rather than
+stored. What is left is editing it, the notes, and then retiring the artifact,
+which is the rest of issue #1. Until that last step, the procedure above is
+the real one and the artifact is what you play from.
 
 ## Rules
 
