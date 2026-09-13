@@ -6,11 +6,13 @@ import {
   CLASSES,
   DEFAULT_SKILL_TARGET,
   EQUIPMENT,
+  GLAMOURS,
   KINDREDS,
   SKILLS,
   UNARMOURED_AC,
   XP_MODIFIERS,
   type CharacterClass,
+  type Glamour,
   type Kindred,
 } from "./tables.ts";
 import type {
@@ -117,6 +119,17 @@ export function attackBonus(input: RulesInput): AttackBonus {
   };
 }
 
+/** The glamour this character rolled, or null if they have none. */
+export function glamour(input: RulesInput): Glamour | null {
+  return input.glamour ? (GLAMOURS[input.glamour] ?? null) : null;
+}
+
+/** How many coins may be glamoured today. Zero without a glamour. */
+export function glamourCoinCap(input: RulesInput): number {
+  const g = glamour(input);
+  return g ? g.coinsPerLevel * effectiveLevel(input) : 0;
+}
+
 export type SkillTarget = { target: number; source: "class" | "kindred" | "default" };
 
 /**
@@ -162,7 +175,9 @@ export function maxHitPoints(input: RulesInput): number {
       continue;
     }
     const rolled = input.hitDice[l - 1];
-    if (rolled === undefined) continue;
+    // A blank or a zero is a level whose die has not been rolled yet, not a
+    // level worth nothing. It contributes nothing and is reported as owed.
+    if (rolled === undefined || rolled <= 0) continue;
     total += Math.max(1, rolled + con);
   }
   return total;
@@ -172,7 +187,8 @@ export function maxHitPoints(input: RulesInput): number {
 export function hitDiceOwed(input: RulesInput): number {
   const c = characterClass(input);
   const rollable = Math.min(effectiveLevel(input), c.flatHitPointsFrom - 1);
-  return Math.max(0, rollable - input.hitDice.length);
+  const recorded = input.hitDice.filter((die) => die > 0).length;
+  return Math.max(0, rollable - recorded);
 }
 
 function normalise(text: string): string {
@@ -289,6 +305,8 @@ export type Computed = {
   magicResistance: number;
   maxHitPoints: number;
   hitDiceOwed: number;
+  glamour: Glamour | null;
+  glamourCoinCap: number;
   loadouts: Loadout[];
   unrated: KitItem[];
 };
@@ -312,6 +330,8 @@ export function computed(input: RulesInput): Computed {
     magicResistance: magicResistance(input),
     maxHitPoints: maxHitPoints(input),
     hitDiceOwed: hitDiceOwed(input),
+    glamour: glamour(input),
+    glamourCoinCap: glamourCoinCap(input),
     loadouts: loadouts(input),
     unrated: unratedItems(input),
   };

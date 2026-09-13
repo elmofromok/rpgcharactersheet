@@ -6,6 +6,8 @@ import {
   attackBonus,
   bankXp,
   computed,
+  glamour,
+  glamourCoinCap,
   hitDiceOwed,
   loadouts,
   magicResistance,
@@ -142,6 +144,12 @@ describe("hit points", () => {
     const ten = maxHitPoints(moggle({ level: 10, hitDice: rolls }));
     assert.equal(ten, 20);
     assert.equal(maxHitPoints(moggle({ level: 11, hitDice: rolls })), 22);
+  });
+
+  test("a die not yet rolled counts for nothing rather than for one", () => {
+    // A blank box in the editor arrives as a zero.
+    assert.equal(maxHitPoints(moggle({ level: 2, hitDice: [4, 0] })), 2);
+    assert.equal(hitDiceOwed(moggle({ level: 2, hitDice: [4, 0] })), 1);
   });
 
   test("levelling ahead of the dice is reported rather than guessed", () => {
@@ -283,6 +291,25 @@ describe("rating kit", () => {
 
   test("Moggle carries nine things that do nothing in a fight", () => {
     assert.equal(unratedItems(moggle()).length, 9);
+  });
+});
+
+describe("glamours", () => {
+  test("the daily coin cap is the glamour's rate times the level", () => {
+    const input = moggle({ glamour: "fools-gold" });
+    assert.equal(glamourCoinCap(input), 20);
+    assert.equal(glamourCoinCap(moggle({ glamour: "fools-gold", level: 3 })), 60);
+  });
+
+  test("a character with no glamour has no cap", () => {
+    assert.equal(glamour(moggle()), null);
+    assert.equal(glamourCoinCap(moggle()), 0);
+  });
+
+  test("a glamour the table does not know is not invented", () => {
+    const input = moggle({ glamour: "wish-for-a-fish" });
+    assert.equal(glamour(input), null);
+    assert.equal(glamourCoinCap(input), 0);
   });
 });
 

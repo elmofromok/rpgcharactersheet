@@ -67,6 +67,22 @@ The warning that wilder form cannot be reached appears when maximum hit points
 are below 3 and disappears when they are not, instead of sitting on the page
 after it stops being true.
 
+## Editing
+
+Every change is written to the database about a second after you stop making
+it. There is no save button, and the play tracker says whether the last change
+is in yet.
+
+Editing splits by how often you do it. The play tracker and the kit are always
+live, because a toggle in front of your hit points is a toggle you would leave
+on. Ability scores, the hit dice you rolled, and the name, alignment, age and
+height sit behind **Edit details**, which is off when the page opens so that
+scrolling on a phone cannot change a Constitution.
+
+Kindred and class are fixed at creation and are never editable. Changing
+either makes a different character, and the sheet would have no content to
+draw for the new one.
+
 ## The system rules
 
 `src/systems/dolmenwood/` holds Dolmenwood's own tables and the values that

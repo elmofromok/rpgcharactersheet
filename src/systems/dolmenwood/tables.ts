@@ -151,6 +151,31 @@ export const GRIMALKIN: Kindred = {
 
 export const KINDREDS: Record<string, Kindred> = { grimalkin: GRIMALKIN };
 
+export type Glamour = {
+  name: string;
+  /** Coins that may be glamoured each day, per level. */
+  coinsPerLevel: number;
+  duration: string;
+  /** True of the glamour, not of whoever rolled it. */
+  description: string;
+};
+
+/**
+ * id=grimalkin, the fairy magic table. Which glamour a character has is a roll
+ * they made once and is recorded on them; what the glamour does belongs here.
+ */
+export const GLAMOURS: Record<string, Glamour> = {
+  "fools-gold": {
+    name: "Fool's Gold",
+    coinsPerLevel: 20,
+    duration: "1d6 minutes",
+    description:
+      "Touch copper coins and they look like gold to mortals. Range is whatever you touch. " +
+      "Any mortal who looks at the coins may Save Versus Spell to see the trick for what it " +
+      "is, and other fairies are not fooled at all.",
+  },
+};
+
 /** id=armour_and_weapons. Keyed by the words to look for in a kit line. */
 export const UNARMOURED_AC = 10;
 

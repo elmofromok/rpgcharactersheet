@@ -1,8 +1,9 @@
 // What a grimalkin is. True of every grimalkin, which is why it lives here as
 // a component rather than in the character.
 //
-// Not here: which glamour this particular cat rolled. That is one character's
-// result on the fairy magic table, so it belongs to the character as a note.
+// Which glamour a cat rolled is recorded on the character; what that glamour
+// does is system content, so it comes out of the table below rather than
+// being written into this file.
 
 import { sign, type SheetProps } from "./shared.ts";
 import { kindred } from "../rules.ts";
@@ -63,6 +64,26 @@ function Grimalkin({ character, computed }: SheetProps): JSX.Element {
           comes to {sign(computed.magicResistance)} on any saving throw against a magical effect.
         </p>
       </div>
+
+      {computed.glamour ? (
+        <div class="entry">
+          <span class="tag">Glamour</span>
+          <h3>{computed.glamour.name}</h3>
+          <p>{computed.glamour.description}</p>
+          <p style="margin-top:8px">
+            It lasts <span class="roll">{computed.glamour.duration}</span>. You may glamour{" "}
+            <b>
+              {computed.glamour.coinsPerLevel} coins per day per level, so{" "}
+              {computed.glamourCoinCap} a day at level {character.level}
+            </b>
+            .
+          </p>
+          <p style="margin-top:8px">
+            Like every glamour it needs no words or gestures, cannot be disrupted, and costs
+            your action for the round.
+          </p>
+        </div>
+      ) : null}
 
       <div class="entry">
         <span class="tag">Odds and ends</span>

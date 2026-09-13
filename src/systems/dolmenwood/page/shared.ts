@@ -1,15 +1,29 @@
 import type { CharacterDocument } from "../../../character.ts";
+import type { Patch, SaveState } from "../../../sheet/useCharacter.ts";
 import type { Computed } from "../rules.ts";
 import type { Ability, SaveKind, Skill } from "../types.ts";
 
 /**
  * A system page holds no character of its own, so every component takes the
- * character and what the rules make of it, and nothing else.
+ * character, what the rules make of it, and a way to change it.
+ *
+ * `editing` gates the parts that are read far more often than they are
+ * changed. The play tracker and the kit ignore it: those are always live,
+ * because a toggle in front of your hit points is a toggle you would leave on.
  */
 export type SheetProps = {
   character: CharacterDocument;
   computed: Computed;
+  patch: Patch;
+  editing: boolean;
+  status: SaveState;
 };
+
+/** Reads a number out of an input without letting a half-typed value through. */
+export function toNumber(value: string, fallback: number): number {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isNaN(parsed) ? fallback : parsed;
+}
 
 export const ABILITY_NAMES: Record<Ability, string> = {
   str: "Strength",

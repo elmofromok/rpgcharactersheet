@@ -1,8 +1,11 @@
 // A system page plus a character makes a sheet. This is the Dolmenwood one:
 // it holds no character of its own, and every number it shows is computed.
 
+import { useState } from "preact/hooks";
+
 import { characterClass, computed as compute, kindred } from "../rules.ts";
 import type { CharacterDocument } from "../../../character.ts";
+import type { Patch, SaveState } from "../../../sheet/useCharacter.ts";
 import { CLASS_PAGES } from "./class.tsx";
 import { Kit } from "./kit.tsx";
 import { KINDRED_PAGES } from "./kindred.tsx";
@@ -26,36 +29,94 @@ function Divider({ flip }: { flip?: boolean }) {
   );
 }
 
-function Masthead({ character, computed }: SheetProps) {
+/** Kindred and class are absent on purpose: changing either is a different
+ * character, so they are fixed at creation and never offered here. */
+const EDITABLE_FACTS: Array<[string, "alignment" | "age" | "height"]> = [
+  ["Alignment", "alignment"],
+  ["Age", "age"],
+  ["Height", "height"],
+];
+
+function Masthead({
+  character,
+  computed,
+  patch,
+  editing,
+  onToggleEditing,
+}: SheetProps & { onToggleEditing: () => void }) {
   const kin = kindred(character);
   const klass = characterClass(character);
 
-  const facts: Array<[string, string]> = [
+  const fixed: Array<[string, string]> = [
     ["Kindred", kin.name],
     ["Class", klass.name],
     ["Combat aptitude", klass.aptitude],
-    ["Alignment", character.alignment],
     ["XP modifier", percent(computed.xpModifier)],
-    ["Age", character.age],
-    ["Height", character.height],
     ["Max level", String(computed.maxLevel)],
   ];
 
   return (
     <header class="masthead">
-      <p class="eyebrow">
-        Dolmenwood &middot; Level {character.level} &middot; {count(character.xp)} XP
-      </p>
-      <h1>{character.name}</h1>
+      <div class="masthead-top">
+        <p class="eyebrow">
+          Dolmenwood &middot; Level {character.level} &middot; {count(character.xp)} XP
+        </p>
+        <button
+          type="button"
+          class="act"
+          aria-pressed={editing}
+          onClick={onToggleEditing}
+        >
+          {editing ? "Done editing" : "Edit details"}
+        </button>
+      </div>
+
+      {editing ? (
+        <input
+          class="name"
+          type="text"
+          value={character.name}
+          aria-label="Name"
+          onInput={(e) => patch({ name: e.currentTarget.value })}
+        />
+      ) : (
+        <h1>{character.name}</h1>
+      )}
+
       <div class="dramatis">
-        {facts
+        {fixed
           .filter(([, value]) => value)
           .map(([label, value]) => (
             <span key={label}>
               {label} <b>{value}</b>
             </span>
           ))}
+        {EDITABLE_FACTS.map(([label, field]) =>
+          editing ? (
+            <span key={label}>
+              {label}{" "}
+              <input
+                type="text"
+                class="fact"
+                value={character[field]}
+                aria-label={label}
+                onInput={(e) => patch({ [field]: e.currentTarget.value })}
+              />
+            </span>
+          ) : character[field] ? (
+            <span key={label}>
+              {label} <b>{character[field]}</b>
+            </span>
+          ) : null,
+        )}
       </div>
+
+      {editing ? (
+        <p class="note">
+          Kindred and class are fixed at creation: changing either makes a different character.
+          Everything else on the sheet follows from the scores, the hit dice and the kit.
+        </p>
+      ) : null}
     </header>
   );
 }
@@ -72,16 +133,26 @@ function Unsupported({ what, name }: { what: string; name: string }) {
   );
 }
 
-export function Sheet({ character }: { character: CharacterDocument }) {
+export function Sheet({
+  character,
+  patch,
+  status,
+}: {
+  character: CharacterDocument;
+  patch: Patch;
+  status: SaveState;
+}) {
+  // Off by default, so scrolling on a phone cannot change a Constitution.
+  const [editing, setEditing] = useState(false);
   const computed = compute(character);
-  const props: SheetProps = { character, computed };
+  const props: SheetProps = { character, computed, patch, editing, status };
 
   const KindredPage = KINDRED_PAGES[character.kindred.toLowerCase()];
   const ClassPage = CLASS_PAGES[character.class.toLowerCase()];
 
   return (
     <div class="sheet">
-      <Masthead {...props} />
+      <Masthead {...props} onToggleEditing={() => setEditing((on) => !on)} />
       <Divider />
 
       <div class="layout">

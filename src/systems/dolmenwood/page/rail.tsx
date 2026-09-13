@@ -9,11 +9,12 @@ import {
   SKILL_NAMES,
   sign,
   skillChance,
+  toNumber,
   type SheetProps,
 } from "./shared.ts";
 import type { SaveKind, Skill } from "../types.ts";
 
-export function Abilities({ character, computed }: SheetProps) {
+export function Abilities({ character, computed, patch, editing }: SheetProps) {
   const primes = characterClass(character).primeAbilities;
 
   return (
@@ -39,7 +40,30 @@ export function Abilities({ character, computed }: SheetProps) {
             return (
               <tr key={ability} class={classes || undefined}>
                 <td>{ABILITY_NAMES[ability]}</td>
-                <td>{character.abilities[ability]}</td>
+                <td>
+                  {editing ? (
+                    <input
+                      class="score"
+                      type="number"
+                      inputMode="numeric"
+                      value={character.abilities[ability]}
+                      aria-label={ABILITY_NAMES[ability]}
+                      onInput={(e) =>
+                        patch({
+                          abilities: {
+                            ...character.abilities,
+                            [ability]: toNumber(
+                              e.currentTarget.value,
+                              character.abilities[ability],
+                            ),
+                          },
+                        })
+                      }
+                    />
+                  ) : (
+                    character.abilities[ability]
+                  )}
+                </td>
                 <td class={modifier === 0 ? "same" : undefined}>{sign(modifier)}</td>
               </tr>
             );
@@ -49,17 +73,26 @@ export function Abilities({ character, computed }: SheetProps) {
       <p class="note">
         Ability checks are d6 plus that ability's modifier against a fixed target of 4.
       </p>
+      {editing ? (
+        <p class="note">
+          Scores are recorded, so correcting a mistyped roll here moves every number that
+          follows from it.
+        </p>
+      ) : null}
     </section>
   );
 }
 
-export function Combat({ character, computed }: SheetProps) {
+export function Combat({ character, computed, patch, editing }: SheetProps) {
   const armourClasses = computed.loadouts.map((l) => l.armourClass);
   const low = Math.min(...armourClasses);
   const high = Math.max(...armourClasses);
   const kin = kindred(character);
   const con = computed.abilityModifiers.con;
   const pips = Math.min(Math.max(character.hp, 0), 12);
+  const klass = characterClass(character);
+  // Levels past the point the class goes flat take no roll at all.
+  const rollable = Math.min(character.level, klass.flatHitPointsFrom - 1);
 
   return (
     <section class="card">
@@ -105,6 +138,36 @@ export function Combat({ character, computed }: SheetProps) {
             <small>{sign(computed.attack.missile)} with missile weapons</small>
           </dd>
         </div>
+
+        {editing ? (
+          <div class="stat">
+            <dt>Hit dice rolled</dt>
+            <dd>
+              <span class="dice">
+                {Array.from({ length: rollable }, (_, index) => (
+                  <input
+                    key={index}
+                    type="number"
+                    inputMode="numeric"
+                    class="die"
+                    value={character.hitDice[index] ?? ""}
+                    placeholder="?"
+                    aria-label={`hit die rolled at level ${index + 1}`}
+                    onInput={(e) => {
+                      const next = Array.from(
+                        { length: rollable },
+                        (_, i) => character.hitDice[i] ?? 0,
+                      );
+                      next[index] = toNumber(e.currentTarget.value, 0);
+                      patch({ hitDice: next });
+                    }}
+                  />
+                ))}
+              </span>
+              <small>one per level, oldest first, on d{characterClass(character).hitDie}</small>
+            </dd>
+          </div>
+        ) : null}
 
         <div class="stat">
           <dt>Magic resistance</dt>

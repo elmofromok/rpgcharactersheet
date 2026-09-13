@@ -1,9 +1,7 @@
 import { render } from "preact";
-import { useEffect, useState } from "preact/hooks";
 
-import type { CharacterDocument } from "../character.ts";
 import { Sheet } from "../systems/dolmenwood/page/sheet.tsx";
-import { fetchCharacter, listCharacters } from "./api.ts";
+import { useCharacter } from "./useCharacter.ts";
 import "./style.css";
 
 /** The path names the character, so a second one needs no new page code. */
@@ -12,23 +10,7 @@ function idFromPath(): string | null {
 }
 
 function App() {
-  const [character, setCharacter] = useState<CharacterDocument | null>(null);
-  const [problem, setProblem] = useState<string | null>(null);
-
-  useEffect(() => {
-    void (async () => {
-      try {
-        const id = idFromPath() ?? (await listCharacters())[0]?.id;
-        if (!id) {
-          setProblem("No characters in the database yet. Import one: npm run import");
-          return;
-        }
-        setCharacter(await fetchCharacter(id));
-      } catch (err) {
-        setProblem(err instanceof Error ? err.message : String(err));
-      }
-    })();
-  }, []);
+  const { character, status, problem, patch } = useCharacter(idFromPath());
 
   if (problem) {
     return (
@@ -46,7 +28,7 @@ function App() {
   }
 
   document.title = character.name;
-  return <Sheet character={character} />;
+  return <Sheet character={character} patch={patch} status={status} />;
 }
 
 const root = document.getElementById("sheet");

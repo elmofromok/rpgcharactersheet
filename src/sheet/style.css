@@ -565,3 +565,286 @@ button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
+
+/* ---- editing ----
+   Inputs read as text until you reach for them, so a sheet you are mostly
+   reading does not look like a form you might fumble. */
+input,
+textarea,
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.masthead-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+input.name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(38px, 7vw, 66px);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  width: 100%;
+  background: none;
+  border: none;
+  border-bottom: 2px dotted var(--line);
+  padding: 0;
+}
+input.fact {
+  width: 7ch;
+  font-family: var(--data);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+input.score {
+  width: 5ch;
+  text-align: right;
+  font-family: var(--data);
+  font-size: 14px;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 2px 5px;
+}
+.dice {
+  display: inline-flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+input.die {
+  width: 4ch;
+  text-align: center;
+  font-family: var(--data);
+  font-size: 14px;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+
+#savestate {
+  font-family: var(--data);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--soft);
+}
+#savestate[data-s="unsaved"],
+#savestate[data-s="failed"] {
+  color: var(--warn);
+}
+#savestate[data-s="saved"] {
+  color: var(--accent);
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.stepper button {
+  width: 30px;
+  height: 32px;
+  flex: none;
+  border: 1px solid var(--line);
+  background: var(--ground);
+  border-radius: 4px;
+  font-family: var(--data);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+.stepper button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.stepper input {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 4px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--ground);
+  font-family: var(--data);
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.gauge.crit .stepper input {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.inline {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.inline input[type="text"],
+.inline input[type="number"] {
+  flex: 1;
+  min-width: 80px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--ground);
+  font-size: 14.5px;
+}
+.act {
+  padding: 7px 13px;
+  border: 1px solid var(--line);
+  background: var(--ground);
+  border-radius: 4px;
+  font-family: var(--data);
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.act:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.act[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  color: var(--accent);
+}
+
+.flagline input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  accent-color: var(--accent);
+}
+.flagline small {
+  color: var(--soft);
+}
+
+.tracker textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--ground);
+  font-size: 14.5px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.trophies li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+.trophies li button {
+  border: none;
+  background: none;
+  color: var(--soft);
+  cursor: pointer;
+  font-family: var(--data);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 4px;
+}
+.trophies li button:hover {
+  color: var(--warn);
+}
+
+/* ---- kit lines ---- */
+.kit input {
+  background: none;
+  border: none;
+  border-bottom: 1px dotted transparent;
+  padding: 0;
+}
+.kit input:hover {
+  border-bottom-color: var(--line);
+}
+.kit input:focus {
+  border-bottom-color: var(--accent);
+  outline: none;
+}
+.kit input.kit-n {
+  flex: 1;
+  min-width: 0;
+}
+.kit input.num {
+  width: 16ch;
+  text-align: right;
+}
+.kit-r {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex: none;
+}
+.kit .num.auto {
+  opacity: 0.7;
+}
+.kit .rating {
+  font-family: var(--data);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  background: var(--accent-wash);
+  border-radius: 3px;
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+.kit .drop {
+  border: none;
+  background: none;
+  color: transparent;
+  cursor: pointer;
+  font-family: var(--data);
+  font-size: 16px;
+  line-height: 1;
+  padding: 0 2px;
+}
+.kit li:hover .drop,
+.kit .drop:focus-visible {
+  color: var(--soft);
+}
+.kit .drop:hover {
+  color: var(--warn);
+}
+
+@media (max-width: 560px) {
+  .kit input.num {
+    width: 9ch;
+  }
+  .kit .rating {
+    display: none;
+  }
+}

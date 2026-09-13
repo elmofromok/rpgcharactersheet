@@ -45,5 +45,7 @@ export type RulesInput = {
   abilities: Record<Ability, number>;
   /** The hit die actually rolled at each level, oldest first. */
   hitDice: number[];
+  /** Which glamour this character rolled, if their kindred has any. */
+  glamour?: string;
   kit: KitItem[];
 };
