@@ -10,6 +10,7 @@ Currently one character: Moggle Fluff-a-kin, a grimalkin hunter in Dolmenwood.
 ```
 characters/<id>.json    one character: who they are, and where their numbers are now
 sheet/<system>.html     the page: markup, styles, and the play tracker script
+src/systems/<system>/   the system rules: the tables, and what is computed from them
 build.mjs               character + template -> dist/<id>.html
 dist/                   build output, not committed
 ```
@@ -21,7 +22,37 @@ node build.mjs                     every character
 node build.mjs moggle-fluff-a-kin  one
 ```
 
-No dependencies. Node 18 or later.
+`build.mjs` has no dependencies. Node 23.6 or later, which is what strips the
+types out of `src/` without a build step. TypeScript is a dev dependency for
+the type check and ships nowhere.
+
+## The system rules
+
+`src/systems/dolmenwood/` holds Dolmenwood's own tables and the values that
+follow from them: saving throws, skill targets, attack bonus, magic resistance,
+experience thresholds and the experience modifier, hit points per level, armour
+class, and the list of loadouts the kit allows. Character in, computed values
+out. Nothing in there reads the page or the character file.
+
+Values are recorded or computed, never both. Ability scores and the hit die you
+actually rolled at each level are recorded. Everything above is computed from
+them, so changing your level moves all of it at once.
+
+The tables are transcribed from the [online rules
+reference](https://www.dolmenwood.necroticgnome.com/rules/), with the page id
+noted above each one. One number is not: the grimalkin maximum level of 14 is
+carried over from the sheet this project started from, because the kindred page
+does not state it.
+
+```
+npm run check   type check, then the tests
+npm test        the tests alone
+```
+
+Only the rules are tested, and deliberately. A broken layout is visible the
+moment the page opens; a saving throw one too high is not. The tests pin every
+number the published sheet currently shows, so a bad transcription fails here
+rather than at the table.
 
 Commit before you build. The page footer carries a build stamp naming the
 commit it came from, so a build from a dirty tree is labelled
