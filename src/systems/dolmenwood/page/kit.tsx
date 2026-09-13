@@ -9,6 +9,7 @@ import { useState } from "preact/hooks";
 
 import { rate } from "../rules.ts";
 import type { Gear, KitItem } from "../types.ts";
+import { Notes } from "./notes.tsx";
 import { sign, type SheetProps } from "./shared.ts";
 
 function badge(gear: Gear | null): string | null {
@@ -158,6 +159,7 @@ export function Kit({ character, computed, patch }: SheetProps) {
           the sheet is not counting it.
         </p>
       ) : null}
+      <Notes at="kit" />
     </section>
   );
 }

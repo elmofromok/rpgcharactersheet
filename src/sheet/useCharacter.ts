@@ -32,10 +32,19 @@ export function useCharacter(id: string | null): Loaded {
   const timer = useRef<number | undefined>(undefined);
   const saving = useRef(false);
   const queued = useRef(false);
+  // What the database already holds. Every revision is kept forever, so
+  // writing one that changes nothing is not harmless: it is a line of history
+  // that says an edit happened when none did.
+  const written = useRef<string | null>(null);
 
   const flush = useCallback(async (): Promise<void> => {
     const document = latest.current;
     if (!document) return;
+    const serialised = JSON.stringify(document);
+    if (serialised === written.current) {
+      setStatus("saved");
+      return;
+    }
     if (saving.current) {
       queued.current = true;
       return;
@@ -44,6 +53,7 @@ export function useCharacter(id: string | null): Loaded {
     setStatus("saving");
     try {
       await saveCharacter(document);
+      written.current = serialised;
       saving.current = false;
       if (queued.current) {
         queued.current = false;
@@ -84,6 +94,7 @@ export function useCharacter(id: string | null): Loaded {
         }
         const loaded = await fetchCharacter(wanted);
         latest.current = loaded;
+        written.current = JSON.stringify(loaded);
         setCharacter(loaded);
         setStatus("saved");
       } catch (err) {

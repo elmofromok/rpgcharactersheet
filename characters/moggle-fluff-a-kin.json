@@ -33,7 +33,62 @@
   "coins": 0,
   "trophies": [],
   "journal": "",
-  "notes": [],
+  "notes": [
+    {
+      "id": "page-top-session-one",
+      "anchor": "page.top",
+      "tone": "aside",
+      "body": "Everything on this sheet is settled. Two things to raise with your referee before session one: whether the jet black wools are worth a bonus on a night-time Stalking roll, and whether zero hit points means dead or whether they use a death’s door rule. The second one matters more to you than to anyone else at the table."
+    },
+    {
+      "id": "abilities-constitution",
+      "anchor": "abilities",
+      "tone": "warning",
+      "body": "**Constitution 5 is the defining fact of this character.** You lose 2 hit points per level for the whole of your career, and if the `d8` comes up 1, 2 or 3 you start play on a single hit point. A goblin with a rock can end you. It also costs you 20% of all XP earned, because Constitution is one of the hunter’s two prime abilities.\n\nPlay accordingly. Stay at bowshot. Let the animal companion scout. Do not be the one who opens the door."
+    },
+    {
+      "id": "abilities-creation-step-4",
+      "anchor": "abilities",
+      "tone": "aside",
+      "body": "Rolled straight down, kept as rolled. If you ever want it, creation step 4 lets you drop a non-prime score by 2 to raise a prime by 1, with a floor of 9. Strength 12→9 and Wisdom 10→9 would buy Constitution up to 7, halving both the hit point loss and the XP penalty, and neither score would change its modifier."
+    },
+    {
+      "id": "kit-starting-gear",
+      "anchor": "kit",
+      "tone": "aside",
+      "body": "The clothes, backpack and belt pouch are what every character starts with. The armour, shield, bow and dagger are a legal hunter equipment roll. Custom-fitted armour for a grimalkin takes `2d6` days to make or alter."
+    },
+    {
+      "id": "kit-barrow-digging",
+      "anchor": "kit",
+      "tone": "aside",
+      "body": "Chisel, sledgehammer, shovel, ink and quill. That is a barrow-digging kit with a notebook attached, in a wood named after its standing stones. Play it as deliberate. Watch it against your encumbrance too, because a hammer and a shovel together are a great deal of iron for a three-foot cat, and speed is most of what keeps you alive."
+    },
+    {
+      "id": "kit-whistle",
+      "anchor": "kit",
+      "tone": "aside",
+      "body": "The whistle is audible to every living thing except dogs. Nobody has yet found the use for it. Somebody will."
+    },
+    {
+      "id": "glamour-not-a-fight",
+      "anchor": "kindred.glamour",
+      "tone": "aside",
+      "body": "Worth saying plainly: this does nothing in a fight. It is a swindler’s tool with a `1d6` minute fuse, which means the plan has to include being somewhere else when it lapses."
+    },
+    {
+      "id": "companion-front-line",
+      "anchor": "class.companion",
+      "tone": "aside",
+      "body": "With your hit points this is the closest thing you have to a front line, so choose something that can take a hit."
+    },
+    {
+      "id": "appearance-violet-fur",
+      "anchor": "page.appearance",
+      "tone": "plain",
+      "body": "Violet fur, a snub nose, and ear tufts nobody would call modest. The black wools do nothing for your armour class and a great deal for your outline after dark. Ask your referee whether they are worth something on a Stalking roll at night; the rules do not say, and most referees will give you it.\n\nFastidious is the word people use. You groom before a fight and again after it, and you will not sleep in a wet cloak. Keep playing that. A habit the referee can reach for is worth more at the table than a line on the sheet."
+    }
+  ],
   "kit": [
     {
       "n": "Leather armour, cut down to a cat’s frame",

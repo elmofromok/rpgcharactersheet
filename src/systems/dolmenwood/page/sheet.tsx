@@ -9,9 +9,13 @@ import type { Patch, SaveState } from "../../../sheet/useCharacter.ts";
 import { CLASS_PAGES } from "./class.tsx";
 import { Kit } from "./kit.tsx";
 import { KINDRED_PAGES } from "./kindred.tsx";
+import { ANCHORS } from "./anchors.ts";
+import { NoteCard, Notes, NotesProvider, OrphanedNotes } from "./notes.tsx";
 import { Abilities, Combat, Particulars, SavingThrows, Skills } from "./rail.tsx";
 import { count, percent, type SheetProps } from "./shared.ts";
 import { Tracker } from "./tracker.tsx";
+
+const KNOWN_ANCHORS: readonly string[] = ANCHORS.map((anchor) => anchor.id);
 
 function Divider({ flip }: { flip?: boolean }) {
   return (
@@ -151,53 +155,60 @@ export function Sheet({
   const ClassPage = CLASS_PAGES[character.class.toLowerCase()];
 
   return (
-    <div class="sheet">
-      <Masthead {...props} onToggleEditing={() => setEditing((on) => !on)} />
-      <Divider />
+    <NotesProvider value={{ notes: character.notes, editing, patch }}>
+      <div class="sheet">
+        <Masthead {...props} onToggleEditing={() => setEditing((on) => !on)} />
+        <Notes at="page.top" />
+        <Divider />
 
-      <div class="layout">
-        <div class="left">
-          <Tracker {...props} />
-        </div>
+        <div class="layout">
+          <div class="left">
+            <Tracker {...props} />
+          </div>
 
-        <div class="right">
-          <div class="columns">
-            <div class="rail">
-              <Abilities {...props} />
-              <Combat {...props} />
-              <SavingThrows {...props} />
-              <Skills {...props} />
-              <Particulars {...props} />
-            </div>
+          <div class="right">
+            <div class="columns">
+              <div class="rail">
+                <Abilities {...props} />
+                <Combat {...props} />
+                <SavingThrows {...props} />
+                <Skills {...props} />
+                <Particulars {...props} />
+              </div>
 
-            <div class="main">
-              <Kit {...props} />
-              {KindredPage ? (
-                <KindredPage {...props} />
-              ) : (
-                <Unsupported what="Kindred" name={character.kindred} />
-              )}
-              {ClassPage ? (
-                <ClassPage {...props} />
-              ) : (
-                <Unsupported what="Class" name={character.class} />
-              )}
+              <div class="main">
+                <Kit {...props} />
+                {KindredPage ? (
+                  <KindredPage {...props} />
+                ) : (
+                  <Unsupported what="Kindred" name={character.kindred} />
+                )}
+                {ClassPage ? (
+                  <ClassPage {...props} />
+                ) : (
+                  <Unsupported what="Class" name={character.class} />
+                )}
+
+                <NoteCard at="page.appearance" title="Appearance and bearing" />
+
+                <OrphanedNotes known={KNOWN_ANCHORS} />
+              </div>
             </div>
           </div>
         </div>
+
+        <Divider flip />
+
+        <p class="colophon">
+          Built from the{" "}
+          <a href="https://www.dolmenwood.necroticgnome.com/rules/">
+            Dolmenwood Online Rules Reference
+          </a>{" "}
+          (Necrotic Gnome). Every number on this sheet is worked out from {character.name}'s
+          ability scores, hit dice and kit; nothing above is stored.
+          <span class="build">{__BUILD_STAMP__}</span>
+        </p>
       </div>
-
-      <Divider flip />
-
-      <p class="colophon">
-        Built from the{" "}
-        <a href="https://www.dolmenwood.necroticgnome.com/rules/">
-          Dolmenwood Online Rules Reference
-        </a>{" "}
-        (Necrotic Gnome). Every number on this sheet is worked out from {character.name}'s
-        ability scores, hit dice and kit; nothing above is stored.
-        <span class="build">{__BUILD_STAMP__}</span>
-      </p>
-    </div>
+    </NotesProvider>
   );
 }
