@@ -49,10 +49,22 @@ npm run check   type check, then the tests
 npm test        the tests alone
 ```
 
-Only the rules are tested, and deliberately. A broken layout is visible the
-moment the page opens; a saving throw one too high is not. The tests pin every
-number the published sheet currently shows, so a bad transcription fails here
-rather than at the table.
+Only the rules and the store are tested, and deliberately. A broken layout is
+visible the moment the page opens; a saving throw one too high is not, and a
+save that quietly drops a field is not either. The rules tests pin every number
+the published sheet currently shows, so a bad transcription fails here rather
+than at the table.
+
+## The database
+
+`characters.db`, a SQLite file on this machine, through Node's built-in SQLite
+module. One table. A save inserts a row and never updates or deletes one, so a
+character is its own change log and any past state can be read back by revision
+number. See [ADR-0002](docs/adr/0002-the-change-log-is-the-store.md) for why
+there is no separate table holding the current version.
+
+The file is not committed. It is play state, and ADR-0001 chose a change log
+over git history exactly so that nobody has to remember to commit it.
 
 Commit before you build. The page footer carries a build stamp naming the
 commit it came from, so a build from a dirty tree is labelled
