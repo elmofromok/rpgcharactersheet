@@ -5,12 +5,18 @@
 //   node build.mjs moggle-fluff-a-kin    build one
 //
 // Output goes to dist/<id>.html and is what gets published to the artifact.
+//
+// Transitional. Characters are flat documents now and their numbers are
+// computed, but the published page still wants the old play-state block, so
+// this projects one onto the other. The whole file goes when the local sheet
+// replaces the artifact.
 
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from "node:fs";
-import { basename } from "node:path";
+import { basename, join } from "node:path";
 import { execFileSync } from "node:child_process";
 
-const REQUIRED = ["id", "name", "template", "start", "state"];
+import { hydrate, readCharacterFile } from "./src/characters/seed.ts";
+import { maxHitPoints } from "./src/systems/dolmenwood/rules.ts";
 
 // Names the commit this build came from, so a stale browser tab can be
 // identified on sight. Build the same commit twice and you get the same
@@ -23,30 +29,46 @@ function buildStamp() {
       day: "numeric", month: "short", year: "numeric",
     });
     const dirty = git("status", "--porcelain") !== "" ? " + uncommitted changes" : "";
-    return `Build ${hash} \u00b7 ${date}${dirty}`;
+    return `Build ${hash} · ${date}${dirty}`;
   } catch {
     return "Unversioned build";
   }
 }
 
+// The play-state block the published page reads. Hit points per level are
+// computed now, so hpMax comes from the rules rather than from the file, and
+// the page's free-text box is the journal.
+function playState(character) {
+  return {
+    hp: character.hp,
+    hpMax: maxHitPoints(character),
+    xp: character.xp,
+    level: character.level,
+    gold: character.gold,
+    arrows: character.arrows,
+    wilder: character.wilder,
+    coins: character.coins,
+    trophies: character.trophies,
+    notes: character.journal,
+    kit: character.kit,
+  };
+}
+
 function build(file) {
-  const character = JSON.parse(readFileSync(file, "utf8"));
+  const character = hydrate(readCharacterFile(file));
+  const templateName = `${character.system}.html`;
+  const template = readFileSync(join("sheet", templateName), "utf8");
 
-  for (const key of REQUIRED) {
-    if (!character[key]) throw new Error(`${basename(file)}: missing "${key}"`);
-  }
-  if (character.id !== basename(file, ".json")) {
-    throw new Error(`${basename(file)}: id "${character.id}" does not match the filename`);
-  }
-
-  const template = readFileSync(`sheet/${character.template}`, "utf8");
   for (const token of ["{{STATE}}", "{{START}}", "{{BUILD}}"]) {
-    if (!template.includes(token)) throw new Error(`${character.template}: no ${token}`);
+    if (!template.includes(token)) throw new Error(`${templateName}: no ${token}`);
   }
 
+  // Both tokens get the same object. START is only the page's fallback for a
+  // field STATE is missing, and STATE is never missing one.
+  const state = JSON.stringify(playState(character));
   const html = template
-    .replace("{{STATE}}", () => JSON.stringify(character.state))
-    .replace("{{START}}", () => JSON.stringify(character.start))
+    .replace("{{STATE}}", () => state)
+    .replace("{{START}}", () => state)
     .replace("{{BUILD}}", () => stamp);
 
   if (html.includes("{{")) throw new Error(`${character.id}: unreplaced token left in output`);
@@ -64,4 +86,4 @@ const files = readdirSync("characters")
   .filter((f) => !only || f === `${only}.json`);
 
 if (files.length === 0) throw new Error(only ? `no character named "${only}"` : "no characters found");
-for (const f of files) build(`characters/${f}`);
+for (const f of files) build(join("characters", f));

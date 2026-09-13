@@ -6,6 +6,7 @@
     "node": ">=23.6"
   },
   "scripts": {
+    "import": "node src/import.ts",
     "test": "node --test src/",
     "typecheck": "tsc",
     "check": "npm run typecheck && npm test"

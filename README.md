@@ -8,9 +8,12 @@ Currently one character: Moggle Fluff-a-kin, a grimalkin hunter in Dolmenwood.
 ## Layout
 
 ```
-characters/<id>.json    one character: who they are, and where their numbers are now
+characters/<id>.json    one character, written by hand: the seed the database is imported from
 sheet/<system>.html     the page: markup, styles, and the play tracker script
 src/systems/<system>/   the system rules: the tables, and what is computed from them
+src/storage/            the database: every character, and every revision of one
+src/characters/         reading a character file, and the fallback chain
+src/import.ts           character file -> characters.db, once
 build.mjs               character + template -> dist/<id>.html
 dist/                   build output, not committed
 ```
@@ -22,9 +25,22 @@ node build.mjs                     every character
 node build.mjs moggle-fluff-a-kin  one
 ```
 
-`build.mjs` has no dependencies. Node 23.6 or later, which is what strips the
-types out of `src/` without a build step. TypeScript is a dev dependency for
-the type check and ships nowhere.
+Node 23.6 or later, which is what strips the types out of `src/` without a
+build step. TypeScript is a dev dependency for the type check and ships
+nowhere.
+
+Commit before you build. The page footer carries a build stamp naming the
+commit it came from, so a build from a dirty tree is labelled
+`+ uncommitted changes` on the published sheet. The stamp uses the commit's
+date rather than today's, so rebuilding the same commit gives the same stamp.
+
+The output in `dist/` is the page body, with no `<html>` or `<body>` wrapper,
+because that is what the Claude artifact publisher expects. It gets published
+to the URL in the character's `artifact` field.
+
+`build.mjs` is transitional. Characters are flat documents whose numbers are
+computed, but the published page still wants the old play-state block, so the
+build projects one onto the other. It goes when the artifact does.
 
 ## The system rules
 
@@ -66,26 +82,28 @@ there is no separate table holding the current version.
 The file is not committed. It is play state, and ADR-0001 chose a change log
 over git history exactly so that nobody has to remember to commit it.
 
-Commit before you build. The page footer carries a build stamp naming the
-commit it came from, so a build from a dirty tree is labelled
-`+ uncommitted changes` on the published sheet. The stamp uses the commit's
-date rather than today's, so rebuilding the same commit gives the same stamp.
-
-The output in `dist/` is the page body, with no `<html>` or `<body>` wrapper,
-because that is what the Claude artifact publisher expects. It gets published
-to the URL in the character's `artifact` field.
-
 ## A character file
 
-Two blocks of numbers, and they mean different things.
+One flat document. No `start` block, no `state` block, and nothing in it that
+the rules can work out for themselves.
 
-`start` is the character as created and does not change. Moggle began with 7 gp
-and thirteen items. It is also the fallback the page uses for any field missing
-from a saved state, so an older save picks up new fields instead of breaking.
+It is a seed, not a copy of the character. Write one by hand, import it once,
+and the database takes over:
 
-`state` is where the character is now. The play tracker writes this, so it moves
-during a session: hit points, experience, gold, arrows, the kit list, trophies,
-notes.
+```
+node src/import.ts moggle-fluff-a-kin   one character
+node src/import.ts                      every character file
+```
+
+A second import of a character already in the database is refused, because the
+file is older than anything played since. `--force` overrides it and will lose
+play.
+
+Only `id`, `name`, `system`, `kindred`, `class` and `abilities` are required.
+Everything else falls back: a field missing from a saved character comes from
+its file, and a field missing from the file comes from the system defaults.
+That chain is what lets a character saved before a field existed pick the field
+up instead of breaking, and it is why the old `start` block is gone.
 
 ## The part that is not solved yet
 
@@ -96,7 +114,10 @@ artifact. They drift the moment anyone plays.
 Until that is fixed, publishing follows this order, and skipping the first step
 silently reverts whatever happened at the table:
 
-1. Read the live artifact and copy its state block into `characters/<id>.json`
+1. Read the live artifact and copy its state block onto the matching top-level
+   fields of `characters/<id>.json`. Same names, except that the block's
+   `notes` is the file's `journal`, and its `hpMax` is dropped because maximum
+   hit points are computed now
 2. Commit
 3. `node build.mjs <id>`
 4. Publish `dist/<id>.html` to the artifact URL
@@ -105,8 +126,11 @@ If a published sheet ever looks wrong, read the build stamp in its footer
 first. It names the commit, and an old browser tab reports the build it was
 made from even after a session of saving itself.
 
-The fix is to move play state into the artifact's own database, so the page
-holds only the interface and publishing cannot touch the numbers. Not done yet.
+The fix is under way: the sheet moves to a local server with the character in
+SQLite, so publishing stops being how a character is saved. See
+[ADR-0001](docs/adr/0001-local-server-and-sqlite.md) and issue #1. The rules,
+the database and the import all exist; the server and the page do not yet.
+Until they do, the procedure above is still the real one.
 
 ## Rules
 

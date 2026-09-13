@@ -26,6 +26,12 @@ export type CharacterDocument = RulesInput & {
   id: string;
   name: string;
   system: string;
+  /**
+   * Where this character is currently published. Transitional: it exists so
+   * `build.mjs` can keep rebuilding the artifact while the local sheet is
+   * being written, and it goes when the artifact does.
+   */
+  artifact?: string;
   alignment: string;
   age: string;
   height: string;
