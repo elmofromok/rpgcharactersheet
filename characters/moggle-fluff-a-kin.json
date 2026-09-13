@@ -2,146 +2,96 @@
   "id": "moggle-fluff-a-kin",
   "name": "Moggle Fluff-a-kin",
   "system": "dolmenwood",
-  "template": "dolmenwood.html",
   "artifact": "https://claude.ai/code/artifact/7d0aed21-570a-4a97-808c-39cf7983d0ef",
-  "start": {
-    "hp": 2,
-    "hpMax": 2,
-    "xp": 0,
-    "level": 1,
-    "gold": 7,
-    "arrows": 20,
-    "wilder": false,
-    "coins": 0,
-    "trophies": [],
-    "notes": "",
-    "kit": [
-      {
-        "n": "Leather armour, cut down to a cat’s frame",
-        "t": "AC 12 · light"
-      },
-      {
-        "n": "Shield",
-        "t": "+1 AC"
-      },
-      {
-        "n": "Shortbow",
-        "t": "1d6 · two-handed"
-      },
-      {
-        "n": "Arrows",
-        "t": "",
-        "auto": "arrows"
-      },
-      {
-        "n": "Dagger",
-        "t": "1d4 · small"
-      },
-      {
-        "n": "Common clothes, under jet black wools",
-        "t": ""
-      },
-      {
-        "n": "Backpack: 2 preserved rations, waterskin, tinder box",
-        "t": ""
-      },
-      {
-        "n": "Belt pouch",
-        "t": "",
-        "auto": "gold"
-      },
-      {
-        "n": "A whistle only dogs cannot hear",
-        "t": ""
-      },
-      {
-        "n": "Chisel",
-        "t": "no. 3"
-      },
-      {
-        "n": "Sledgehammer",
-        "t": "no. 16"
-      },
-      {
-        "n": "Ink, quill, 5 sheets of paper",
-        "t": "no. 8"
-      },
-      {
-        "n": "Shovel",
-        "t": "no. 15"
-      }
-    ]
+  "kindred": "grimalkin",
+  "class": "hunter",
+  "alignment": "Neutral",
+  "age": "999",
+  "height": "3′6″",
+  "languages": [
+    "Woldish",
+    "Mewl"
+  ],
+  "level": 1,
+  "xp": 0,
+  "abilities": {
+    "str": 12,
+    "int": 9,
+    "wis": 10,
+    "dex": 10,
+    "con": 5,
+    "cha": 11
   },
-  "state": {
-    "hp": 2,
-    "hpMax": 2,
-    "xp": 0,
-    "level": 1,
-    "gold": 5,
-    "arrows": 20,
-    "wilder": false,
-    "coins": 0,
-    "trophies": [],
-    "notes": "",
-    "kit": [
-      {
-        "n": "Leather armour, cut down to a cat’s frame",
-        "t": "AC 12 · light"
-      },
-      {
-        "n": "Shield",
-        "t": "+1 AC"
-      },
-      {
-        "n": "Shortbow",
-        "t": "1d6 · two-handed"
-      },
-      {
-        "n": "Arrows",
-        "t": "",
-        "auto": "arrows"
-      },
-      {
-        "n": "Dagger",
-        "t": "1d4 · small"
-      },
-      {
-        "n": "Common clothes, under jet black wools",
-        "t": ""
-      },
-      {
-        "n": "Backpack: 2 preserved rations, waterskin, tinder box",
-        "t": ""
-      },
-      {
-        "n": "Belt pouch",
-        "t": "",
-        "auto": "gold"
-      },
-      {
-        "n": "A whistle only dogs cannot hear",
-        "t": ""
-      },
-      {
-        "n": "Chisel",
-        "t": "no. 3"
-      },
-      {
-        "n": "Sledgehammer",
-        "t": "no. 16"
-      },
-      {
-        "n": "Ink, quill, 5 sheets of paper",
-        "t": "no. 8"
-      },
-      {
-        "n": "Shovel",
-        "t": "no. 15"
-      },
-      {
-        "n": "Bedroll",
-        "t": ""
-      }
-    ]
-  }
+  "hitDice": [
+    4
+  ],
+  "glamour": "fools-gold",
+  "hp": 2,
+  "gold": 5,
+  "arrows": 20,
+  "wilder": false,
+  "coins": 0,
+  "trophies": [],
+  "journal": "",
+  "notes": [],
+  "kit": [
+    {
+      "n": "Leather armour, cut down to a cat’s frame",
+      "t": "AC 12 · light"
+    },
+    {
+      "n": "Shield",
+      "t": "+1 AC"
+    },
+    {
+      "n": "Shortbow",
+      "t": "1d6 · two-handed"
+    },
+    {
+      "n": "Arrows",
+      "t": "",
+      "auto": "arrows"
+    },
+    {
+      "n": "Dagger",
+      "t": "1d4 · small"
+    },
+    {
+      "n": "Common clothes, under jet black wools",
+      "t": ""
+    },
+    {
+      "n": "Backpack: 2 preserved rations, waterskin, tinder box",
+      "t": ""
+    },
+    {
+      "n": "Belt pouch",
+      "t": "",
+      "auto": "gold"
+    },
+    {
+      "n": "A whistle only dogs cannot hear",
+      "t": ""
+    },
+    {
+      "n": "Chisel",
+      "t": "no. 3"
+    },
+    {
+      "n": "Sledgehammer",
+      "t": "no. 16"
+    },
+    {
+      "n": "Ink, quill, 5 sheets of paper",
+      "t": "no. 8"
+    },
+    {
+      "n": "Shovel",
+      "t": "no. 15"
+    },
+    {
+      "n": "Bedroll",
+      "t": ""
+    }
+  ]
 }

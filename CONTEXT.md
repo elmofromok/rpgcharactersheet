@@ -22,6 +22,11 @@ decisions, no implementation notes.
 : The table in the database that keeps every edit with the time it happened.
   Nothing overwrites it, so any past state of a character can be read back.
 
+**Revision**
+: One saved version of one character, numbered in the order it was written and
+  never altered afterwards. A character's newest revision is that character as
+  it stands now, so the change log and the character are the same thing.
+
 **System page**
 : The components that draw a sheet for one game system, holding no character
   of their own. A system page plus a character makes a sheet.

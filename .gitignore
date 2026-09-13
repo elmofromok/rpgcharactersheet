@@ -1,2 +1,5 @@
 dist/
 node_modules/
+characters.db
+characters.db-wal
+characters.db-shm

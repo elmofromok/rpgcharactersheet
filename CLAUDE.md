@@ -3,6 +3,15 @@
 Character sheets built as self-contained HTML pages and published as Claude
 artifacts, so they can be edited during play.
 
+## Running the local sheet
+
+`npm run build && npm start` serves it on `127.0.0.1:4000` and opens a browser.
+`npm run dev` serves it through Vite instead, with hot reload. `npm run check`
+type checks and runs the tests.
+
+The server owns the database. Do not read or write `characters.db` from
+anywhere else while it is running.
+
 ## Publishing a sheet
 
 The published page saves itself by republishing its entire document, state
@@ -14,7 +23,10 @@ Always, in this order:
 
 1. Read the live artifact: the `Artifact` tool with `action: "read"` and the
    `artifact` URL from `characters/<id>.json`
-2. Copy its `#state` block into the `state` field of `characters/<id>.json`
+2. Copy its `#state` values onto the matching top-level fields of
+   `characters/<id>.json`. They are the same names, with two exceptions: the
+   block's `notes` is the file's `journal`, and its `hpMax` is dropped, because
+   maximum hit points are now computed from `hitDice` and Constitution
 3. Commit, so the build stamp names a real commit rather than a dirty tree
 4. `node build.mjs <id>`
 5. Publish `dist/<id>.html` to that same artifact URL
@@ -23,13 +35,19 @@ Step 1 is the one that matters. Skipping it loses the user's play session.
 
 ## Character files
 
-`start` is the character as created and does not change. It is also the
-fallback the page uses for any field missing from a saved state, so an older
-save picks up new fields instead of breaking. Never edit `start` to record
-something that happened in play.
+`characters/<id>.json` is one flat document: the character as written by hand.
+There is no `start` block and no `state` block any more.
 
-`state` is where the character is now: hit points, experience, gold, arrows,
-the kit list, trophies, notes. The play tracker writes it.
+It is a seed. Import it once with `node src/import.ts <id>` and the database at
+`characters.db` becomes where the character lives; the file goes stale from
+that moment. A second import is refused, because the file would be older than
+anything played since. `--force` overrides that and will lose play.
+
+Only recorded values belong in the file: ability scores, the hit die actually
+rolled at each level, the kit, the notes, and the play values. Anything the
+rules can work out (saving throws, skill targets, attack bonus, maximum hit
+points, armour class) is computed by `src/systems/<system>/rules.ts` and must
+never be written down, or there will be two answers to the same question.
 
 ## Build stamp
 

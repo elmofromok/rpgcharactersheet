@@ -1,48 +1,150 @@
 # rpgcharactersheet
 
-Character sheets for tabletop RPGs, built as single self-contained HTML pages
-and published as Claude artifacts so they can be edited during play.
+Character sheets for tabletop RPGs, editable during play.
+
+The sheet is moving from a published Claude artifact to a local server with
+the character in SQLite, so nothing about a character leaves this machine. See
+[ADR-0001](docs/adr/0001-local-server-and-sqlite.md). Both exist at the moment:
+the artifact is still the one you play from, and the local sheet is being
+written.
 
 Currently one character: Moggle Fluff-a-kin, a grimalkin hunter in Dolmenwood.
 
 ## Layout
 
 ```
-characters/<id>.json    one character: who they are, and where their numbers are now
+characters/<id>.json    one character, written by hand: the seed the database is imported from
 sheet/<system>.html     the page: markup, styles, and the play tracker script
-build.mjs               character + template -> dist/<id>.html
+src/systems/<system>/   the system rules: the tables, and what is computed from them
+src/systems/<system>/page/  the system page: the components that draw a sheet
+src/storage/            the database: every character, and every revision of one
+src/characters/         reading a character file, and the fallback chain
+src/import.ts           character file -> characters.db, once
+src/server.ts           the local server: owns the database, serves the sheet
+src/server/             the API, and serving the built page
+src/sheet/              the page shell, the stylesheet, and the vendored fonts
+build.mjs               character + template -> dist/<id>.html, for the artifact
 dist/                   build output, not committed
 ```
 
-## Build
+## Running it
 
 ```
-node build.mjs                     every character
-node build.mjs moggle-fluff-a-kin  one
+npm run build   build the sheet
+npm start       serve it, and open a browser
+npm run dev     serve it through Vite instead, with hot reload
 ```
 
-No dependencies. Node 18 or later.
+The server listens on `127.0.0.1:4000` and nowhere else. `PORT=4001 npm start`
+moves it. Stop it with ctrl-c.
 
-Commit before you build. The page footer carries a build stamp naming the
-commit it came from, so a build from a dirty tree is labelled
-`+ uncommitted changes` on the published sheet. The stamp uses the commit's
-date rather than today's, so rebuilding the same commit gives the same stamp.
+In dev, Vite runs as middleware inside the same server rather than on a port of
+its own, so the page and the API share one origin. There is no proxy to
+configure, and an edit to `src/sheet/` shows in the browser without a rebuild.
 
-The output in `dist/` is the page body, with no `<html>` or `<body>` wrapper,
-because that is what the Claude artifact publisher expects. It gets published
-to the URL in the character's `artifact` field.
+Node 23.6 or later, which is what strips the types out of `src/` without a
+build step. TypeScript and Vite are dev dependencies; Preact is the only thing
+that ships.
+
+The page makes no request outside this machine. The three fonts are vendored
+into `src/sheet/fonts/` rather than loaded from Google, which is the same
+promise ADR-0001 makes about the character data. See
+[the licences](src/sheet/fonts/LICENSES.md).
+
+## The system page
+
+A system page plus a character makes a sheet. `src/systems/dolmenwood/page/`
+holds the components that draw one, and they hold no character of their own:
+every component takes the character and what the rules make of it.
+
+Prose divides the same way. Text true of every grimalkin or every hunter is a
+component. Text about one character is a note on that character, which is why
+`kindred.tsx` describes wilder form but says nothing about which glamour this
+particular cat rolled.
+
+Sentences that are only sometimes true are computed rather than written down.
+The warning that wilder form cannot be reached appears when maximum hit points
+are below 3 and disappears when they are not, instead of sitting on the page
+after it stops being true.
+
+## Editing
+
+Every change is written to the database about a second after you stop making
+it. There is no save button, and the play tracker says whether the last change
+is in yet.
+
+Editing splits by how often you do it. The play tracker and the kit are always
+live, because a toggle in front of your hit points is a toggle you would leave
+on. Ability scores, the hit dice you rolled, and the name, alignment, age and
+height sit behind **Edit details**, which is off when the page opens so that
+scrolling on a phone cannot change a Constitution.
+
+Kindred and class are fixed at creation and are never editable. Changing
+either makes a different character, and the sheet would have no content to
+draw for the new one.
+
+## The system rules
+
+`src/systems/dolmenwood/` holds Dolmenwood's own tables and the values that
+follow from them: saving throws, skill targets, attack bonus, magic resistance,
+experience thresholds and the experience modifier, hit points per level, armour
+class, and the list of loadouts the kit allows. Character in, computed values
+out. Nothing in there reads the page or the character file.
+
+Values are recorded or computed, never both. Ability scores and the hit die you
+actually rolled at each level are recorded. Everything above is computed from
+them, so changing your level moves all of it at once.
+
+The tables are transcribed from the [online rules
+reference](https://www.dolmenwood.necroticgnome.com/rules/), with the page id
+noted above each one. One number is not: the grimalkin maximum level of 14 is
+carried over from the sheet this project started from, because the kindred page
+does not state it.
+
+```
+npm run check   type check, then the tests
+npm test        the tests alone
+```
+
+Only the rules and the store are tested, and deliberately. A broken layout is
+visible the moment the page opens; a saving throw one too high is not, and a
+save that quietly drops a field is not either. The rules tests pin every number
+the published sheet currently shows, so a bad transcription fails here rather
+than at the table.
+
+## The database
+
+`characters.db`, a SQLite file on this machine, through Node's built-in SQLite
+module. One table. A save inserts a row and never updates or deletes one, so a
+character is its own change log and any past state can be read back by revision
+number. See [ADR-0002](docs/adr/0002-the-change-log-is-the-store.md) for why
+there is no separate table holding the current version.
+
+The file is not committed. It is play state, and ADR-0001 chose a change log
+over git history exactly so that nobody has to remember to commit it.
 
 ## A character file
 
-Two blocks of numbers, and they mean different things.
+One flat document. No `start` block, no `state` block, and nothing in it that
+the rules can work out for themselves.
 
-`start` is the character as created and does not change. Moggle began with 7 gp
-and thirteen items. It is also the fallback the page uses for any field missing
-from a saved state, so an older save picks up new fields instead of breaking.
+It is a seed, not a copy of the character. Write one by hand, import it once,
+and the database takes over:
 
-`state` is where the character is now. The play tracker writes this, so it moves
-during a session: hit points, experience, gold, arrows, the kit list, trophies,
-notes.
+```
+node src/import.ts moggle-fluff-a-kin   one character
+node src/import.ts                      every character file
+```
+
+A second import of a character already in the database is refused, because the
+file is older than anything played since. `--force` overrides it and will lose
+play.
+
+Only `id`, `name`, `system`, `kindred`, `class` and `abilities` are required.
+Everything else falls back: a field missing from a saved character comes from
+its file, and a field missing from the file comes from the system defaults.
+That chain is what lets a character saved before a field existed pick the field
+up instead of breaking, and it is why the old `start` block is gone.
 
 ## The part that is not solved yet
 
@@ -50,10 +152,32 @@ The published page saves by republishing its own entire document, state block
 included. So the same numbers live in two places: this repo, and the live
 artifact. They drift the moment anyone plays.
 
-Until that is fixed, publishing follows this order, and skipping the first step
-silently reverts whatever happened at the table:
+Until the local sheet replaces it, the artifact is still the one you play
+from, and it is built by `build.mjs` rather than by Vite:
 
-1. Read the live artifact and copy its state block into `characters/<id>.json`
+```
+node build.mjs                     every character
+node build.mjs moggle-fluff-a-kin  one
+```
+
+Commit before you build. The page footer carries a build stamp naming the
+commit it came from, so a build from a dirty tree is labelled
+`+ uncommitted changes` on the published sheet. The stamp uses the commit's
+date rather than today's, so rebuilding the same commit gives the same stamp.
+
+The output in `dist/` is the page body, with no `<html>` or `<body>` wrapper,
+because that is what the Claude artifact publisher expects. `build.mjs` is
+transitional: characters are flat documents whose numbers are computed, but
+the published page still wants the old play-state block, so the build projects
+one onto the other. It goes when the artifact does.
+
+Publishing follows this order, and skipping the first step silently reverts
+whatever happened at the table:
+
+1. Read the live artifact and copy its state block onto the matching top-level
+   fields of `characters/<id>.json`. Same names, except that the block's
+   `notes` is the file's `journal`, and its `hpMax` is dropped because maximum
+   hit points are computed now
 2. Commit
 3. `node build.mjs <id>`
 4. Publish `dist/<id>.html` to the artifact URL
@@ -62,8 +186,10 @@ If a published sheet ever looks wrong, read the build stamp in its footer
 first. It names the commit, and an old browser tab reports the build it was
 made from even after a session of saving itself.
 
-The fix is to move play state into the artifact's own database, so the page
-holds only the interface and publishing cannot touch the numbers. Not done yet.
+The local sheet now reads, and shows every number computed rather than
+stored. What is left is editing it, the notes, and then retiring the artifact,
+which is the rest of issue #1. Until that last step, the procedure above is
+the real one and the artifact is what you play from.
 
 ## Rules
 
