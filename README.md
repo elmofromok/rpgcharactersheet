@@ -1,7 +1,12 @@
 # rpgcharactersheet
 
-Character sheets for tabletop RPGs, built as single self-contained HTML pages
-and published as Claude artifacts so they can be edited during play.
+Character sheets for tabletop RPGs, editable during play.
+
+The sheet is moving from a published Claude artifact to a local server with
+the character in SQLite, so nothing about a character leaves this machine. See
+[ADR-0001](docs/adr/0001-local-server-and-sqlite.md). Both exist at the moment:
+the artifact is still the one you play from, and the local sheet is being
+written.
 
 Currently one character: Moggle Fluff-a-kin, a grimalkin hunter in Dolmenwood.
 
@@ -14,33 +19,31 @@ src/systems/<system>/   the system rules: the tables, and what is computed from 
 src/storage/            the database: every character, and every revision of one
 src/characters/         reading a character file, and the fallback chain
 src/import.ts           character file -> characters.db, once
-build.mjs               character + template -> dist/<id>.html
+src/server.ts           the local server: owns the database, serves the sheet
+src/server/             the API, and serving the built page
+src/sheet/              the page itself, in TypeScript and Preact
+build.mjs               character + template -> dist/<id>.html, for the artifact
 dist/                   build output, not committed
 ```
 
-## Build
+## Running it
 
 ```
-node build.mjs                     every character
-node build.mjs moggle-fluff-a-kin  one
+npm run build   build the sheet
+npm start       serve it, and open a browser
+npm run dev     serve it through Vite instead, with hot reload
 ```
+
+The server listens on `127.0.0.1:4000` and nowhere else. `PORT=4001 npm start`
+moves it. Stop it with ctrl-c.
+
+In dev, Vite runs as middleware inside the same server rather than on a port of
+its own, so the page and the API share one origin. There is no proxy to
+configure, and an edit to `src/sheet/` shows in the browser without a rebuild.
 
 Node 23.6 or later, which is what strips the types out of `src/` without a
-build step. TypeScript is a dev dependency for the type check and ships
-nowhere.
-
-Commit before you build. The page footer carries a build stamp naming the
-commit it came from, so a build from a dirty tree is labelled
-`+ uncommitted changes` on the published sheet. The stamp uses the commit's
-date rather than today's, so rebuilding the same commit gives the same stamp.
-
-The output in `dist/` is the page body, with no `<html>` or `<body>` wrapper,
-because that is what the Claude artifact publisher expects. It gets published
-to the URL in the character's `artifact` field.
-
-`build.mjs` is transitional. Characters are flat documents whose numbers are
-computed, but the published page still wants the old play-state block, so the
-build projects one onto the other. It goes when the artifact does.
+build step. TypeScript and Vite are dev dependencies; Preact is the only thing
+that ships.
 
 ## The system rules
 
@@ -111,8 +114,27 @@ The published page saves by republishing its own entire document, state block
 included. So the same numbers live in two places: this repo, and the live
 artifact. They drift the moment anyone plays.
 
-Until that is fixed, publishing follows this order, and skipping the first step
-silently reverts whatever happened at the table:
+Until the local sheet replaces it, the artifact is still the one you play
+from, and it is built by `build.mjs` rather than by Vite:
+
+```
+node build.mjs                     every character
+node build.mjs moggle-fluff-a-kin  one
+```
+
+Commit before you build. The page footer carries a build stamp naming the
+commit it came from, so a build from a dirty tree is labelled
+`+ uncommitted changes` on the published sheet. The stamp uses the commit's
+date rather than today's, so rebuilding the same commit gives the same stamp.
+
+The output in `dist/` is the page body, with no `<html>` or `<body>` wrapper,
+because that is what the Claude artifact publisher expects. `build.mjs` is
+transitional: characters are flat documents whose numbers are computed, but
+the published page still wants the old play-state block, so the build projects
+one onto the other. It goes when the artifact does.
+
+Publishing follows this order, and skipping the first step silently reverts
+whatever happened at the table:
 
 1. Read the live artifact and copy its state block onto the matching top-level
    fields of `characters/<id>.json`. Same names, except that the block's
@@ -126,11 +148,9 @@ If a published sheet ever looks wrong, read the build stamp in its footer
 first. It names the commit, and an old browser tab reports the build it was
 made from even after a session of saving itself.
 
-The fix is under way: the sheet moves to a local server with the character in
-SQLite, so publishing stops being how a character is saved. See
-[ADR-0001](docs/adr/0001-local-server-and-sqlite.md) and issue #1. The rules,
-the database and the import all exist; the server and the page do not yet.
-Until they do, the procedure above is still the real one.
+The rules, the database, the import and the server all exist now. What is left
+is the page: the sheet itself still has to be written against them, which is
+the rest of issue #1. Until it is, the procedure above is the real one.
 
 ## Rules
 

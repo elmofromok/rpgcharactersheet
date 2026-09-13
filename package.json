@@ -6,6 +6,9 @@
     "node": ">=23.6"
   },
   "scripts": {
+    "start": "node src/server.ts",
+    "dev": "node src/server.ts --dev",
+    "build": "vite build",
     "import": "node src/import.ts",
     "test": "node --test src/",
     "typecheck": "tsc",
@@ -13,6 +16,10 @@
   },
   "devDependencies": {
     "@types/node": "^26.5.1",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  },
+  "dependencies": {
+    "preact": "^10.29.8"
   }
 }

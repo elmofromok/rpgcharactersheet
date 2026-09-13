@@ -3,6 +3,15 @@
 Character sheets built as self-contained HTML pages and published as Claude
 artifacts, so they can be edited during play.
 
+## Running the local sheet
+
+`npm run build && npm start` serves it on `127.0.0.1:4000` and opens a browser.
+`npm run dev` serves it through Vite instead, with hot reload. `npm run check`
+type checks and runs the tests.
+
+The server owns the database. Do not read or write `characters.db` from
+anywhere else while it is running.
+
 ## Publishing a sheet
 
 The published page saves itself by republishing its entire document, state

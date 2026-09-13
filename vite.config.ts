@@ -1,0 +1,22 @@
+import { defineConfig } from "vite";
+
+// The page is served by the local server, not by Vite's own dev server: Vite
+// runs as middleware inside it, so the API and the sheet share one origin and
+// there is no proxy to keep in step.
+export default defineConfig({
+  root: "src/sheet",
+  build: {
+    outDir: "../../dist/sheet",
+    emptyOutDir: true,
+  },
+  // Preact's JSX through Vite 8's Oxc transform, with no plugin. An edit
+  // still reloads the page immediately; what this gives up is preserving
+  // component state across that reload, which costs nothing when the state
+  // lives in the database.
+  oxc: {
+    jsx: {
+      runtime: "automatic",
+      importSource: "preact",
+    },
+  },
+});
