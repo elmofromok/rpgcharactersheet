@@ -3,7 +3,8 @@
 // (Necrotic Gnome), https://www.dolmenwood.necroticgnome.com/rules/, with the
 // page id noted above each table.
 
-import type { Ability, Gear, SaveKind, Skill } from "./types.ts";
+import type {
+  Bulk, Ability, Gear, SaveKind, Skill } from "./types.ts";
 
 type Band = { min: number; max: number; value: number };
 
@@ -174,30 +175,62 @@ export const GLAMOURS: Record<string, Glamour> = {
 export const UNARMOURED_AC = 10;
 
 export const EQUIPMENT: Record<string, Gear> = {
-  leather: { kind: "armour", ac: 12 },
-  bark: { kind: "armour", ac: 13 },
-  chainmail: { kind: "armour", ac: 14 },
-  pinecone: { kind: "armour", ac: 15 },
-  "plate mail": { kind: "armour", ac: 16 },
-  "full plate": { kind: "armour", ac: 17 },
+  leather: { kind: "armour", ac: 12, bulk: "light" },
+  bark: { kind: "armour", ac: 13, bulk: "light" },
+  chainmail: { kind: "armour", ac: 14, bulk: "medium" },
+  pinecone: { kind: "armour", ac: 15, bulk: "medium" },
+  "plate mail": { kind: "armour", ac: 16, bulk: "heavy" },
+  "full plate": { kind: "armour", ac: 17, bulk: "heavy" },
 
   shield: { kind: "shield", bonus: 1 },
 
   club: { kind: "weapon", damage: "1d4", hands: 1, small: false },
   dagger: { kind: "weapon", damage: "1d4", hands: 1, small: true },
   staff: { kind: "weapon", damage: "1d4", hands: 2, small: false },
-  sling: { kind: "weapon", damage: "1d4", hands: 1, small: false },
+  sling: { kind: "weapon", damage: "1d4", hands: 1, small: false, missile: true },
   "hand axe": { kind: "weapon", damage: "1d6", hands: 1, small: true },
   mace: { kind: "weapon", damage: "1d6", hands: 1, small: false },
-  shortbow: { kind: "weapon", damage: "1d6", hands: 2, small: false },
+  shortbow: { kind: "weapon", damage: "1d6", hands: 2, small: false, missile: true },
   shortsword: { kind: "weapon", damage: "1d6", hands: 1, small: false },
   spear: { kind: "weapon", damage: "1d6", hands: 1, small: false },
   "war hammer": { kind: "weapon", damage: "1d6", hands: 1, small: false },
   lance: { kind: "weapon", damage: "1d6", hands: 1, small: false },
-  longbow: { kind: "weapon", damage: "1d6", hands: 2, small: false },
+  longbow: { kind: "weapon", damage: "1d6", hands: 2, small: false, missile: true },
   "battle axe": { kind: "weapon", damage: "1d8", hands: 1, small: false },
-  crossbow: { kind: "weapon", damage: "1d8", hands: 2, small: false },
+  crossbow: { kind: "weapon", damage: "1d8", hands: 2, small: false, missile: true },
   longsword: { kind: "weapon", damage: "1d8", hands: 1, small: false },
   polearm: { kind: "weapon", damage: "1d10", hands: 2, small: false },
   "two-handed sword": { kind: "weapon", damage: "1d10", hands: 2, small: false },
 };
+
+/**
+ * id=encumbrance, the slot system. A character has 10 slots for what is
+ * equipped (worn, held, or ready at short notice) and 16 for what is stowed
+ * in containers. Each column gives a Speed, and the slower one applies.
+ */
+export const EQUIPPED_SLOTS = 10;
+export const STOWED_SLOTS = 16;
+
+export const SPEED_BY_EQUIPPED_SLOTS: Band[] = [
+  { min: 0, max: 3, value: 40 },
+  { min: 4, max: 5, value: 30 },
+  { min: 6, max: 7, value: 20 },
+  { min: 8, max: 10, value: 10 },
+];
+
+export const SPEED_BY_STOWED_SLOTS: Band[] = [
+  { min: 0, max: 10, value: 40 },
+  { min: 11, max: 12, value: 30 },
+  { min: 13, max: 14, value: 20 },
+  { min: 15, max: 16, value: 10 },
+];
+
+/** Every object is 1 slot unless the book says otherwise. These are the otherwise. */
+export const ARMOUR_SLOTS: Record<Bulk, number> = { light: 1, medium: 2, heavy: 3 };
+export const TWO_HANDED_MELEE_SLOTS = 2;
+/** Up to this many make one slot. */
+export const SLOT_BUNDLES = { coins: 100, ammunition: 20 };
+/** Occupy a slot only in large numbers, which the referee judges. Matched on whole words. */
+export const TINY_ITEMS = ["whistle", "quill", "paper", "parchment", "bell", "holy symbol", "herbs", "pipeleaf"];
+/** Count as an item only when not in use, and a container on a character is in use. */
+export const CONTAINERS = ["backpack", "sack", "pouch"];

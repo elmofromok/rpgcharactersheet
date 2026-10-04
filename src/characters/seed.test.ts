@@ -100,7 +100,7 @@ describe("the character file in this repo", () => {
     assert.equal(moggle.arrows, 19);
     assert.equal(moggle.abilities.con, 5);
     assert.deepEqual(moggle.hitDice, [8, 8]);
-    assert.equal(moggle.kit.length, 14);
+    assert.equal(moggle.kit.length, 17);
   });
 
   test("carries the bedroll picked up in play", () => {

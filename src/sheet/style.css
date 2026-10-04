@@ -314,6 +314,33 @@ dl {
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
+.kit .slots {
+  font-family: var(--data);
+  font-size: 11px;
+  color: var(--soft);
+  white-space: nowrap;
+}
+.kit .place {
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--soft);
+  border-radius: 3px;
+  font-family: var(--data);
+  font-size: 10.5px;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.kit .place:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.kit .place[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-wash);
+  color: var(--accent);
+}
 .kit .unrated {
   font-style: italic;
   opacity: 0.75;

@@ -73,6 +73,21 @@ Every number on the sheet is one or the other. Nothing is both.
   two hands and the shield needs an arm, so bow-and-shield is not a loadout.
   Each loadout has its own armour class.
 
+**Slot**
+: One unit of carrying room under Dolmenwood's slot encumbrance. Every object
+  is one slot unless the book says otherwise: armour by bulk, two-handed melee
+  weapons two, bundles one, tiny things none, a container in use none.
+
+**Equipped**
+: A kit item worn, held, or ready at short notice. Ten slots of these.
+
+**Stowed**
+: A kit item packed away in a container. Sixteen slots of these.
+
+**Speed**
+: How far the character moves, computed from the kit. Equipped and stowed
+  slots each give a Speed, and the slower one applies.
+
 **Trophy**
 : Something taken from a kill. Grants combat bonuses later.
 

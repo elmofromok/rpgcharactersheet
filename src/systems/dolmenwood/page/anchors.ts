@@ -15,6 +15,7 @@ export type AnchorId =
   | "abilities"
   | "combat.hitPoints"
   | "combat.armourClass"
+  | "combat.speed"
   | "saves"
   | "skills"
   | "particulars"
@@ -35,6 +36,7 @@ export const ANCHORS: Array<{ id: AnchorId; label: string }> = [
   { id: "abilities", label: "Ability scores" },
   { id: "combat.hitPoints", label: "Hit points" },
   { id: "combat.armourClass", label: "Armour class" },
+  { id: "combat.speed", label: "Speed" },
   { id: "saves", label: "Saving throws" },
   { id: "skills", label: "Skills" },
   { id: "particulars", label: "Particulars" },

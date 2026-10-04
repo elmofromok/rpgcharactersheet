@@ -114,7 +114,7 @@ draw for the new one.
 `src/systems/dolmenwood/` holds Dolmenwood's own tables and the values that
 follow from them: saving throws, skill targets, attack bonus, magic resistance,
 experience thresholds and the experience modifier, hit points per level, armour
-class, and the list of loadouts the kit allows. Character in, computed values
+class, the list of loadouts the kit allows, and Speed from slot encumbrance. Character in, computed values
 out. Nothing in there reads the page or the character file.
 
 Values are recorded or computed, never both. Ability scores and the hit die you

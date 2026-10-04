@@ -90,6 +90,7 @@ export function Combat({ character, computed, patch, editing }: SheetProps) {
   const low = Math.min(...armourClasses);
   const high = Math.max(...armourClasses);
   const kin = kindred(character);
+  const enc = computed.encumbrance;
   const con = computed.abilityModifiers.con;
   const pips = Math.min(Math.max(character.hp, 0), 12);
   const klass = characterClass(character);
@@ -136,6 +137,23 @@ export function Combat({ character, computed, patch, editing }: SheetProps) {
         </div>
 
         <Notes at="combat.armourClass" />
+
+        <div class="stat">
+          <dt>Speed</dt>
+          <dd class="big">
+            {enc.speed}
+            <small>
+              slot encumbrance: {enc.equipped} of {enc.equippedLimit} equipped, {enc.stowed} of{" "}
+              {enc.stowedLimit} stowed
+              <br />
+              {enc.over
+                ? `over the ${enc.over} limit; something has to go`
+                : `equipped alone gives ${enc.equippedSpeed}, stowed alone ${enc.stowedSpeed}; the slower wins`}
+            </small>
+          </dd>
+        </div>
+
+        <Notes at="combat.speed" />
 
         <div class="stat">
           <dt>Attack bonus</dt>

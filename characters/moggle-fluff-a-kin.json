@@ -54,6 +54,12 @@
       "body": "Rolled straight down, kept as rolled. If you ever want it, creation step 4 lets you drop a non-prime score by 2 to raise a prime by 1, with a floor of 9. Strength 12→9 and Wisdom 10→9 would buy Constitution up to 7, halving both the hit point loss and the XP penalty, and neither score would change its modifier."
     },
     {
+      "id": "speed-the-shield",
+      "anchor": "combat.speed",
+      "tone": "aside",
+      "body": "Six equipped slots is what puts you on 20. The shield is one of them, and you only hold it when the bow is away. Stow it in the pack and you are on 5 slots and Speed 30; the price is that it has to come out again before a melee, not during one. The sledgehammer and shovel ride in the pack and cost you nothing yet, but they are the first things to drop when the pack fills."
+    },
+    {
       "id": "kit-starting-gear",
       "anchor": "kit",
       "tone": "aside",
@@ -63,7 +69,7 @@
       "id": "kit-barrow-digging",
       "anchor": "kit",
       "tone": "aside",
-      "body": "Chisel, sledgehammer, shovel, ink and quill. That is a barrow-digging kit with a notebook attached, in a wood named after its standing stones. Play it as deliberate. Watch it against your encumbrance too, because a hammer and a shovel together are a great deal of iron for a three-foot cat, and speed is most of what keeps you alive."
+      "body": "Chisel, sledgehammer, shovel, ink and quill. That is a barrow-digging kit with a notebook attached, in a wood named after its standing stones. Play it as deliberate. It all rides in the pack, which is why it costs you no Speed yet; the pack has room for seven more slots before it does."
     },
     {
       "id": "kit-whistle",
@@ -120,11 +126,9 @@
     },
     {
       "n": "Common clothes, under jet black wools",
-      "t": ""
-    },
-    {
-      "n": "Backpack: 2 preserved rations, waterskin, tinder box",
-      "t": ""
+      "t": "worn",
+      "where": "equipped",
+      "slots": 0
     },
     {
       "n": "Belt pouch",
@@ -133,6 +137,24 @@
     },
     {
       "n": "A whistle only dogs cannot hear",
+      "t": "",
+      "where": "equipped"
+    },
+    {
+      "n": "Backpack",
+      "t": "holds the stowed lines"
+    },
+    {
+      "n": "Preserved rations, 2 days",
+      "t": "",
+      "slots": 2
+    },
+    {
+      "n": "Waterskin",
+      "t": ""
+    },
+    {
+      "n": "Tinder box",
       "t": ""
     },
     {
@@ -145,7 +167,8 @@
     },
     {
       "n": "Ink, quill, 5 sheets of paper",
-      "t": "no. 8"
+      "t": "no. 8",
+      "slots": 1
     },
     {
       "n": "Shovel",

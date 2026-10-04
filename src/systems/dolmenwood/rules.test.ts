@@ -8,7 +8,10 @@ import {
   computed,
   glamour,
   glamourCoinCap,
+  encumbrance,
   hitDiceOwed,
+  placeOf,
+  slotsOf,
   loadouts,
   magicResistance,
   maxHitPoints,
@@ -46,15 +49,21 @@ function moggle(over: Partial<RulesInput> = {}): RulesInput {
       { n: "Shortbow", t: "1d6 · two-handed" },
       { n: "Arrows", t: "", auto: "arrows" },
       { n: "Dagger", t: "1d4 · small" },
-      { n: "Common clothes, under jet black wools", t: "" },
-      { n: "Backpack: 2 preserved rations, waterskin, tinder box", t: "" },
+      { n: "Common clothes, under jet black wools", t: "worn", where: "equipped", slots: 0 },
       { n: "Belt pouch", t: "", auto: "gold" },
-      { n: "A whistle only dogs cannot hear", t: "" },
+      { n: "A whistle only dogs cannot hear", t: "", where: "equipped" },
+      { n: "Backpack", t: "holds the stowed lines" },
+      { n: "Preserved rations, 2 days", t: "", slots: 2 },
+      { n: "Waterskin", t: "" },
+      { n: "Tinder box", t: "" },
       { n: "Chisel", t: "no. 3" },
       { n: "Sledgehammer", t: "no. 16" },
-      { n: "Ink, quill, 5 sheets of paper", t: "no. 8" },
+      { n: "Ink, quill, 5 sheets of paper", t: "no. 8", slots: 1 },
       { n: "Shovel", t: "no. 15" },
+      { n: "Bedroll", t: "" },
     ],
+    gold: 5,
+    arrows: 19,
     ...over,
   };
 }
@@ -247,6 +256,67 @@ describe("armour class and loadouts", () => {
   });
 });
 
+describe("slot encumbrance", () => {
+  test("Moggle has 6 slots to hand and 9 in the pack, so Speed 20", () => {
+    const e = encumbrance(moggle());
+    assert.equal(e.equipped, 6);
+    assert.equal(e.stowed, 9);
+    assert.equal(e.equippedSpeed, 20);
+    assert.equal(e.stowedSpeed, 40);
+    assert.equal(e.speed, 20);
+    assert.equal(e.over, null);
+  });
+
+  test("stowing the shield is the difference between 20 and 30", () => {
+    const kit = moggle().kit.map((i) => (i.n === "Shield" ? { ...i, where: "stowed" as const } : i));
+    assert.equal(encumbrance(moggle({ kit })).speed, 30);
+  });
+
+  test("fighting gear is to hand by default and the rest is packed", () => {
+    assert.equal(placeOf({ n: "Dagger", t: "" }), "equipped");
+    assert.equal(placeOf({ n: "Shield", t: "" }), "equipped");
+    assert.equal(placeOf({ n: "Belt pouch", t: "", auto: "gold" }), "equipped");
+    assert.equal(placeOf({ n: "Rope, 50 feet", t: "" }), "stowed");
+    assert.equal(placeOf({ n: "Rope, 50 feet", t: "", where: "equipped" }), "equipped");
+  });
+
+  test("coins and arrows bundle as the book says", () => {
+    const pouch = { n: "Belt pouch", t: "", auto: "gold" as const };
+    const quiver = { n: "Arrows", t: "", auto: "arrows" as const };
+    assert.equal(slotsOf(pouch, { gold: 0 }), 0);
+    assert.equal(slotsOf(pouch, { gold: 5 }), 1);
+    assert.equal(slotsOf(pouch, { gold: 150 }), 2);
+    assert.equal(slotsOf(quiver, { arrows: 19 }), 1);
+    assert.equal(slotsOf(quiver, { arrows: 21 }), 2);
+  });
+
+  test("armour by bulk, two-handed melee by two, and a bow by one", () => {
+    assert.equal(slotsOf({ n: "Leather armour", t: "" }, {}), 1);
+    assert.equal(slotsOf({ n: "Chainmail", t: "" }, {}), 2);
+    assert.equal(slotsOf({ n: "Plate mail", t: "" }, {}), 3);
+    assert.equal(slotsOf({ n: "Shield", t: "" }, {}), 1);
+    assert.equal(slotsOf({ n: "Staff", t: "" }, {}), 2);
+    assert.equal(slotsOf({ n: "Shortbow", t: "" }, {}), 1);
+    assert.equal(slotsOf({ n: "Dagger", t: "" }, {}), 1);
+  });
+
+  test("tiny things and containers in use take no slot, and a line can say otherwise", () => {
+    assert.equal(slotsOf({ n: "A whistle only dogs cannot hear", t: "" }, {}), 0);
+    assert.equal(slotsOf({ n: "Backpack", t: "" }, {}), 0);
+    assert.equal(slotsOf({ n: "Belt pouch", t: "" }, {}), 0);
+    assert.equal(slotsOf({ n: "Rope, 50 feet", t: "" }, {}), 1);
+    assert.equal(slotsOf({ n: "Ink, quill, 5 sheets of paper", t: "", slots: 1 }, {}), 1);
+  });
+
+  test("past a limit you cannot move, and the column is named", () => {
+    const heavy = Array.from({ length: 11 }, (_, i) => ({ n: `Brick ${i}`, t: "", where: "equipped" as const }));
+    const e = encumbrance(moggle({ kit: heavy }));
+    assert.equal(e.equipped, 11);
+    assert.equal(e.speed, 0);
+    assert.equal(e.over, "equipped");
+  });
+});
+
 describe("rating kit", () => {
   test("the table is matched on whole words", () => {
     assert.equal(rate({ n: "Leather armour, cut down to a cat's frame", t: "" })?.kind, "armour");
@@ -289,8 +359,8 @@ describe("rating kit", () => {
     assert.equal(wornArmour(moggle({ kit: [item] })), null);
   });
 
-  test("Moggle carries nine things that do nothing in a fight", () => {
-    assert.equal(unratedItems(moggle()).length, 9);
+  test("Moggle carries thirteen things that do nothing in a fight", () => {
+    assert.equal(unratedItems(moggle()).length, 13);
   });
 });
 
