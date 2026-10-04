@@ -94,12 +94,12 @@ describe("the character file in this repo", () => {
     assert.equal(moggle.name, "Moggle Fluff-a-kin");
     assert.equal(moggle.kindred, "grimalkin");
     assert.equal(moggle.class, "hunter");
-    assert.equal(moggle.level, 1);
-    assert.equal(moggle.hp, 2);
+    assert.equal(moggle.level, 2);
+    assert.equal(moggle.hp, 7);
     assert.equal(moggle.gold, 5);
-    assert.equal(moggle.arrows, 20);
+    assert.equal(moggle.arrows, 19);
     assert.equal(moggle.abilities.con, 5);
-    assert.deepEqual(moggle.hitDice, [4]);
+    assert.deepEqual(moggle.hitDice, [4, 8]);
     assert.equal(moggle.kit.length, 14);
   });
 

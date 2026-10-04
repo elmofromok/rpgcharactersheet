@@ -12,8 +12,8 @@
     "Woldish",
     "Mewl"
   ],
-  "level": 1,
-  "xp": 0,
+  "level": 2,
+  "xp": 2250,
   "abilities": {
     "str": 12,
     "int": 9,
@@ -23,28 +23,29 @@
     "cha": 11
   },
   "hitDice": [
-    4
+    4,
+    8
   ],
   "glamour": "fools-gold",
-  "hp": 2,
+  "hp": 7,
   "gold": 5,
-  "arrows": 20,
+  "arrows": 19,
   "wilder": false,
   "coins": 0,
   "trophies": [],
   "journal": "",
   "notes": [
     {
-      "id": "page-top-session-one",
+      "id": "page-top-level-two",
       "anchor": "page.top",
       "tone": "aside",
-      "body": "Everything on this sheet is settled. Two things to raise with your referee before session one: whether the jet black wools are worth a bonus on a night-time Stalking roll, and whether zero hit points means dead or whether they use a death’s door rule. The second one matters more to you than to anyone else at the table."
+      "body": "Levelled to 2 on 3 October 2026, on 2,250 XP. The hit die came up 8, so hit points went from 2 to 8. Survival improved to a target of 4 and wilder form is reachable at last. Attack bonus, saves and armour class do not move until level 3. The death’s door question for your referee still stands; it just matters a little less than it did."
     },
     {
       "id": "abilities-constitution",
       "anchor": "abilities",
       "tone": "warning",
-      "body": "**Constitution 5 is the defining fact of this character.** You lose 2 hit points per level for the whole of your career, and if the `d8` comes up 1, 2 or 3 you start play on a single hit point. A goblin with a rock can end you. It also costs you 20% of all XP earned, because Constitution is one of the hunter’s two prime abilities.\n\nPlay accordingly. Stay at bowshot. Let the animal companion scout. Do not be the one who opens the door."
+      "body": "**Constitution 5 is the defining fact of this character.** You lose 2 hit points per level for the whole of your career. Level 1 gave you 2 hit points; level 2 rolled an 8 and quadrupled the total. That is luck, not a trend. It also costs you 20% of all XP earned, because Constitution is one of the hunter’s two prime abilities.\n\nEight hit points is survivable, not safe. A sword hit still takes most of them. Stay at bowshot. Let the animal companion scout. Do not be the one who opens the door."
     },
     {
       "id": "abilities-creation-step-4",
@@ -69,6 +70,12 @@
       "anchor": "kit",
       "tone": "aside",
       "body": "The whistle is audible to every living thing except dogs. Nobody has yet found the use for it. Somebody will."
+    },
+    {
+      "id": "wilder-trigger-level-two",
+      "anchor": "kindred.wilder",
+      "tone": "aside",
+      "body": "With 8 maximum hit points the trigger is 3 or fewer, and the rules also want you in melee when you change. So the sequence is: something gets close enough to hurt you, it does, and then you turn. Not before."
     },
     {
       "id": "glamour-not-a-fight",
