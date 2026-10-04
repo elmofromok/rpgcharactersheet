@@ -56,7 +56,7 @@ function Masthead({
     ["Class", klass.name],
     ["Combat aptitude", klass.aptitude],
     ["XP modifier", percent(computed.xpModifier)],
-    ["Max level", String(computed.maxLevel)],
+    ["Level", String(character.level)],
   ];
 
   return (

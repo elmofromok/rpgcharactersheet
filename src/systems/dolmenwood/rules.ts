@@ -51,8 +51,9 @@ export function kindred(input: RulesInput): Kindred {
   return k;
 }
 
+/** The last level of the class table. Kindreds do not cap it. */
 export function maxLevel(input: RulesInput): number {
-  return Math.min(characterClass(input).levels.length, kindred(input).maxLevel);
+  return characterClass(input).levels.length;
 }
 
 /** A level outside the character's range is read as the nearest one that exists. */

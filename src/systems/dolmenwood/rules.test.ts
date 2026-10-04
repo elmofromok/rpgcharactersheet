@@ -124,7 +124,7 @@ describe("experience", () => {
   });
 
   test("nothing is owed once the cap is reached", () => {
-    assert.equal(xpToNextLevel(moggle({ level: 14 })), null);
+    assert.equal(xpToNextLevel(moggle({ level: 15 })), null);
   });
 });
 
@@ -314,12 +314,12 @@ describe("glamours", () => {
 });
 
 describe("the level cap", () => {
-  test("the kindred caps the character below the class table", () => {
-    assert.equal(maxLevel(moggle()), 14);
+  test("the class table sets the cap, and the kindred does not lower it", () => {
+    assert.equal(maxLevel(moggle()), 15);
   });
 
   test("a level past the cap is read as the cap rather than crashing", () => {
-    assert.deepEqual(savingThrows(moggle({ level: 99 })), savingThrows(moggle({ level: 14 })));
+    assert.deepEqual(savingThrows(moggle({ level: 99 })), savingThrows(moggle({ level: 15 })));
   });
 });
 
@@ -334,7 +334,7 @@ describe("computed", () => {
     assert.equal(c.skills.listen.target, 5);
     assert.equal(c.attack.missile, 2);
     assert.equal(c.magicResistance, 2);
-    assert.equal(c.maxLevel, 14);
+    assert.equal(c.maxLevel, 15);
     assert.equal(c.loadouts.length, 3);
   });
 });

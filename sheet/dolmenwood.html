@@ -270,7 +270,7 @@ input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px soli
     <span>XP modifier <b>&minus;20%</b></span>
     <span>Age <b>999</b></span>
     <span>Height <b>3&prime;6&Prime;</b></span>
-    <span>Max level <b>14</b></span>
+    <span>Level <b>2</b></span>
   </div>
   </div>
 
@@ -518,7 +518,7 @@ input:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px soli
 <script>
 (function(){
 "use strict";
-var XP=[null,0,2250,4500,9000,18000,36000,72000,144000,290000,420000,550000,680000,810000,940000];
+var XP=[null,0,2250,4500,9000,18000,36000,72000,144000,290000,420000,550000,680000,810000,940000,1070000];
 var RATE=0.8;
 var D={{START}};
 var s,api=null,writable=true,timer=null,saving=false,queued=false;
@@ -551,7 +551,7 @@ function gauge(k,label,hint,crit){
 }
 
 function render(){
-  var nx=s.level<14?XP[s.level+1]:null;
+  var nx=s.level<15?XP[s.level+1]:null;
   var need=nx===null?"maximum level":Math.max(0,Math.ceil((nx-s.xp)/RATE)).toLocaleString()+" more awarded to reach level "+(s.level+1);
   var cap=20*s.level;
 
@@ -676,7 +676,7 @@ document.addEventListener("click",function(e){
   if(!el("tracker-body")||!el("tracker-body").contains(t))return;
   if(t.dataset.step){
     var k=t.dataset.k;s[k]=Math.max(k==="level"?1:0,n(s[k],0)+n(t.dataset.step,0));
-    if(k==="level")s.level=Math.min(14,s.level);
+    if(k==="level")s.level=Math.min(15,s.level);
     render();dirty();return;
   }
   if(t.dataset.coins){s.coins=Math.max(0,s.coins+n(t.dataset.coins,0));render();dirty();return;}

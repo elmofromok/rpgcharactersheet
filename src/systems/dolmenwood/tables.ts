@@ -76,8 +76,8 @@ function saves(
 }
 
 /**
- * id=hunter. The class table runs to level 15; a kindred may cap the character
- * below that, and `maxLevel` in rules.ts takes the lower of the two.
+ * id=hunter. The class table runs to level 15, and that is the character's
+ * maximum: Dolmenwood kindreds carry no level limit of their own.
  */
 export const HUNTER: CharacterClass = {
   name: "Hunter",
@@ -127,7 +127,6 @@ export const CLASSES: Record<string, CharacterClass> = { hunter: HUNTER };
 
 export type Kindred = {
   name: string;
-  maxLevel: number;
   magicResistance: number;
   skills: Partial<Record<Skill, number>>;
   /** Melee only, and only against Large creatures. */
@@ -135,14 +134,9 @@ export type Kindred = {
   coldIronExtraDamage: number;
 };
 
-/**
- * id=grimalkin. Max level is the one number here the rules reference does not
- * state on the kindred page; 14 is carried over from the sheet this project
- * started from. Worth checking against the book before a second character.
- */
+/** id=grimalkin */
 export const GRIMALKIN: Kindred = {
   name: "Grimalkin",
-  maxLevel: 14,
   magicResistance: 2,
   skills: { listen: 5 },
   acVersusLarge: 2,

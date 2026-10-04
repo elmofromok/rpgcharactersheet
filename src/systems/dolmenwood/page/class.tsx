@@ -31,7 +31,7 @@ function Hunter({ character, computed }: SheetProps): JSX.Element {
             that means {count(computed.xpToNextLevel)} awarded before it lands.
           </p>
         ) : (
-          <p style="margin-top:8px">You are at the maximum level a grimalkin reaches.</p>
+          <p style="margin-top:8px">You are at the top of the hunter table. There is no level 16.</p>
         )}
         <Notes at="class.aptitude" />
       </div>

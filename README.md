@@ -123,9 +123,8 @@ them, so changing your level moves all of it at once.
 
 The tables are transcribed from the [online rules
 reference](https://www.dolmenwood.necroticgnome.com/rules/), with the page id
-noted above each one. One number is not: the grimalkin maximum level of 14 is
-carried over from the sheet this project started from, because the kindred page
-does not state it.
+noted above each one. A character's maximum level is the last row of the class
+table; Dolmenwood kindreds carry no level limit of their own.
 
 ```
 npm run check   type check, then the tests
