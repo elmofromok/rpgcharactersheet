@@ -23,11 +23,11 @@
     "cha": 11
   },
   "hitDice": [
-    4,
+    8,
     8
   ],
   "glamour": "fools-gold",
-  "hp": 7,
+  "hp": 11,
   "gold": 5,
   "arrows": 19,
   "wilder": false,
@@ -39,13 +39,13 @@
       "id": "page-top-level-two",
       "anchor": "page.top",
       "tone": "aside",
-      "body": "Levelled to 2 on 3 October 2026, on 2,250 XP. The hit die came up 8, so hit points went from 2 to 8. Survival improved to a target of 4 and wilder form is reachable at last. Attack bonus, saves and armour class do not move until level 3. The death’s door question for your referee still stands; it just matters a little less than it did."
+      "body": "Levelled to 2 on 3 October 2026, on 2,250 XP. Level 1 was corrected the same day to the full 6 hit points, and the level 2 die came up 8, so the maximum is 12. Survival improved to a target of 4 and wilder form is reachable at last. Attack bonus, saves and armour class do not move until level 3. The death’s door question for your referee still stands; it just matters a good deal less than it did."
     },
     {
       "id": "abilities-constitution",
       "anchor": "abilities",
       "tone": "warning",
-      "body": "**Constitution 5 is the defining fact of this character.** You lose 2 hit points per level for the whole of your career. Level 1 gave you 2 hit points; level 2 rolled an 8 and quadrupled the total. That is luck, not a trend. It also costs you 20% of all XP earned, because Constitution is one of the hunter’s two prime abilities.\n\nEight hit points is survivable, not safe. A sword hit still takes most of them. Stay at bowshot. Let the animal companion scout. Do not be the one who opens the door."
+      "body": "**Constitution 5 is the defining fact of this character.** You lose 2 hit points per level for the whole of your career, so the two 8s behind your 12 hit points were worth 6 each rather than 8. It also costs you 20% of all XP earned, because Constitution is one of the hunter’s two prime abilities.\n\nTwelve hit points is survivable, not safe. Two sword hits still take most of them. Stay at bowshot. Let the animal companion scout. Do not be the one who opens the door."
     },
     {
       "id": "abilities-creation-step-4",
@@ -75,7 +75,7 @@
       "id": "wilder-trigger-level-two",
       "anchor": "kindred.wilder",
       "tone": "aside",
-      "body": "With 8 maximum hit points the trigger is 3 or fewer, and the rules also want you in melee when you change. So the sequence is: something gets close enough to hurt you, it does, and then you turn. Not before."
+      "body": "With 12 maximum hit points the trigger is 5 or fewer, and the rules also want you in melee when you change. So the sequence is: something gets close enough to hurt you, it does, and then you turn. Not before."
     },
     {
       "id": "glamour-not-a-fight",
