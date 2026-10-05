@@ -53,14 +53,22 @@ export function createApi(store: Store): Api {
       return error(405, `${method} not allowed here`);
     }
 
-    if (tail[0] === "revisions" && method === "GET") {
+    // The history and the levels are read only. A wrong method on either is
+    // told so, not that the endpoint is missing.
+    if (tail[0] === "revisions" && tail.length <= 2) {
+      if (method !== "GET") return error(405, `${method} not allowed here`);
       if (tail.length === 1) return json(200, store.history(id));
-      if (tail.length === 2) {
-        const revision = Number(tail[1]);
-        if (!Number.isInteger(revision)) return error(400, "Revision must be a whole number");
-        const past = store.readAt(id, revision);
-        return past ? json(200, past) : error(404, `No revision ${revision} of "${id}"`);
-      }
+      const revision = Number(tail[1]);
+      if (!Number.isInteger(revision)) return error(400, "Revision must be a whole number");
+      const past = loadCharacter(store, id, revision);
+      return past ? json(200, past) : error(404, `No revision ${revision} of "${id}"`);
+    }
+
+    // One entry per level the character has been saved at. A past level is the
+    // newest revision at that level, read through revisions/:n like any other.
+    if (tail[0] === "levels" && tail.length === 1) {
+      if (method !== "GET") return error(405, `${method} not allowed here`);
+      return json(200, store.levels(id));
     }
 
     return error(404, "No such endpoint");

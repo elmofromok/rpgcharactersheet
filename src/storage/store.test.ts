@@ -141,6 +141,76 @@ describe("history", () => {
   });
 });
 
+describe("levels", () => {
+  test("one entry per level, each pointing at the newest row saved at it", () => {
+    const store = memory();
+    store.save(moggle({ level: 1, hp: 2 }));
+    store.save(moggle({ level: 1, hp: 1 }));
+    store.save(moggle({ level: 2, xp: 2250 }));
+
+    assert.deepEqual(
+      store.levels("moggle-fluff-a-kin").map(({ level, revision }) => ({ level, revision })),
+      [
+        { level: 1, revision: 2 },
+        { level: 2, revision: 3 },
+      ],
+    );
+  });
+
+  test("a level reached, corrected and left again resolves to its newest row", () => {
+    // Moggle's level 1 hit die was fixed after she reached level 2: step down,
+    // correct, step back up. The corrected row is her level 1 now.
+    const store = memory();
+    store.save(moggle({ level: 1, hitDice: [4] }));
+    store.save(moggle({ level: 2, hitDice: [4, 6], xp: 2250 }));
+    store.save(moggle({ level: 1, hitDice: [8, 6], xp: 2250 }));
+    store.save(moggle({ level: 2, hitDice: [8, 6], xp: 2250 }));
+
+    const levels = store.levels("moggle-fluff-a-kin");
+    assert.deepEqual(
+      levels.map(({ level, revision }) => ({ level, revision })),
+      [
+        { level: 1, revision: 3 },
+        { level: 2, revision: 4 },
+      ],
+    );
+    assert.equal(store.readAt("moggle-fluff-a-kin", levels[0]!.revision)?.hitDice[0], 8);
+  });
+
+  test("each entry carries the time its row was written", () => {
+    let tick = 0;
+    const store = openStore(":memory:", {
+      now: () => `2026-09-12T00:0${tick++}:00.000Z`,
+    });
+    temporary.push(store);
+    store.save(moggle({ level: 1 }));
+    store.save(moggle({ level: 2 }));
+
+    assert.deepEqual(
+      store.levels("moggle-fluff-a-kin").map((l) => l.writtenAt),
+      ["2026-09-12T00:00:00.000Z", "2026-09-12T00:01:00.000Z"],
+    );
+  });
+
+  test("a row saved with no level is not a level", () => {
+    const store = memory();
+    const { level: _drop, ...older } = moggle();
+    store.save(older as unknown as CharacterDocument);
+    store.save(moggle({ level: 1 }));
+
+    assert.equal(store.levels("moggle-fluff-a-kin").length, 1);
+  });
+
+  test("one character's levels are its own, and nobody's are none", () => {
+    const store = memory();
+    store.save(moggle({ level: 3 }));
+    store.save(moggle({ id: "someone-else", name: "Someone Else", level: 1 }));
+
+    assert.deepEqual(store.levels("moggle-fluff-a-kin").map((l) => l.level), [3]);
+    assert.deepEqual(store.levels("nobody"), []);
+  });
+});
+
 describe("listing", () => {
   test("every character appears once, at its newest revision", () => {
     const store = memory();

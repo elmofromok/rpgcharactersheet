@@ -20,6 +20,15 @@ export type CharacterSummary = Revision & {
   name: string;
 };
 
+/**
+ * One level a character has been saved at, and the revision that stands for
+ * it: the newest row whose document is at that level. Nothing is stored for a
+ * level; this is read off the log. See docs/adr/0003-past-levels-are-read-from-the-log.md.
+ */
+export type LevelEntry = Revision & {
+  level: number;
+};
+
 export type Store = {
   /** Writes a new revision and returns it. The previous one is never touched. */
   save(document: CharacterDocument): Revision;
@@ -29,6 +38,8 @@ export type Store = {
   readAt(id: string, revision: number): CharacterDocument | null;
   /** Every revision of one character, newest first. */
   history(id: string): Revision[];
+  /** Every level one character has been saved at, lowest first, each with its newest row. */
+  levels(id: string): LevelEntry[];
   /** Every character, by its newest revision. */
   list(): CharacterSummary[];
   close(): void;
@@ -84,6 +95,21 @@ export function openStore(path: string, options: StoreOptions = {}): Store {
   const log = db.prepare(
     "SELECT revision, written_at FROM revisions WHERE character_id = ? ORDER BY revision DESC",
   );
+  // A level is a fact inside the document, so the grouping key is pulled out of
+  // the JSON. A row saved before the level field existed has no level and is
+  // left out; it is topped up to level 1 on the way to the page, but that is
+  // the loader's business, not the log's.
+  const newestPerLevel = db.prepare(`
+    SELECT r.revision, r.written_at, json_extract(r.document, '$.level') AS level
+    FROM revisions r
+    JOIN (
+      SELECT MAX(revision) AS revision
+      FROM revisions
+      WHERE character_id = ? AND json_extract(document, '$.level') IS NOT NULL
+      GROUP BY json_extract(document, '$.level')
+    ) closing ON closing.revision = r.revision
+    ORDER BY level
+  `);
   const newestOfEach = db.prepare(`
     SELECT r.* FROM revisions r
     JOIN (
@@ -116,6 +142,15 @@ export function openStore(path: string, options: StoreOptions = {}): Store {
     history(id) {
       const rows = log.all(id) as Array<{ revision: number; written_at: string }>;
       return rows.map((r) => ({ revision: r.revision, writtenAt: r.written_at }));
+    },
+
+    levels(id) {
+      const rows = newestPerLevel.all(id) as Array<{
+        revision: number;
+        written_at: string;
+        level: number;
+      }>;
+      return rows.map((r) => ({ level: r.level, revision: r.revision, writtenAt: r.written_at }));
     },
 
     list() {

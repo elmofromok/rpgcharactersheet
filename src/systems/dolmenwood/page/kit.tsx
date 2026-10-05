@@ -146,11 +146,12 @@ export function Kit({ character, computed, patch }: SheetProps) {
         </button>
       </div>
 
-      <p class="note">
-        Click a line to rewrite it and the cross to drop it. Arrows and coin are kept in the play
-        tracker, so those two lines follow it. A line with no rating after it counts for nothing
-        in a fight. Click <i>equipped</i> or <i>stowed</i> to move a line between your hands and
-        your pack; it changes your Speed.
+      {/* How to edit, which a past level has no use for. */}
+      <p class="note howto">
+        Click a line to rewrite it and the cross to drop it. Arrows and coin are kept in the
+        play tracker, so those two lines follow it. A line with no rating after it counts for
+        nothing in a fight. Click <i>equipped</i> or <i>stowed</i> to move a line between your
+        hands and your pack; it changes your Speed.
       </p>
 
       <p class="note">

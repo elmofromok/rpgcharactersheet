@@ -106,6 +106,21 @@ Kindred and class are fixed at creation and are never editable. Changing
 either makes a different character, and the sheet would have no content to
 draw for the new one.
 
+## Looking back
+
+Every save is a revision, so a character's past is already in the database.
+The sheet can show the character as they last stood at each earlier level: the
+whole sheet, read only. Click the level in the top line and pick one, or open
+`/<id>?level=1`. While looking back the page is tinted, the play tracker reads
+"read only", and **Back to now** sits where **Edit details** usually does. The
+one thing that shows through is a save that failed just before you looked back:
+the tracker keeps saying "not saved" until the next edit gets it through.
+
+A past level is the newest revision saved at that level, found by one query
+over the change log. Nothing is stored for it, and a correction made later to
+an earlier level becomes that level's state. See
+[ADR-0003](docs/adr/0003-past-levels-are-read-from-the-log.md).
+
 ## The system rules
 
 `src/systems/dolmenwood/` holds Dolmenwood's own tables and the values that

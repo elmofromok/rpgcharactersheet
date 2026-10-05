@@ -71,6 +71,10 @@ body {
   gap: 36px;
   align-items: start;
   margin-top: 30px;
+  /* It is a fieldset, so a past level can disable it whole. Undo the box. */
+  border: 0;
+  padding: 0;
+  min-width: 0;
 }
 .right {
   min-width: 0;
@@ -463,7 +467,8 @@ code {
   gap: 7px;
   min-width: 0;
 }
-.gauge label {
+.gauge label,
+.gauge .label {
   font-family: var(--data);
   font-size: 10px;
   letter-spacing: 0.11em;
@@ -685,7 +690,8 @@ input.die {
 #savestate[data-s="failed"] {
   color: var(--warn);
 }
-#savestate[data-s="saved"] {
+#savestate[data-s="saved"],
+#savestate[data-s="readonly"] {
   color: var(--accent);
 }
 
@@ -822,7 +828,8 @@ input.die {
   border-bottom-color: var(--accent);
   outline: none;
 }
-.kit input.kit-n {
+/* The name, as an input or as the plain text a past level shows. */
+.kit .kit-n {
   flex: 1;
   min-width: 0;
 }
@@ -972,4 +979,132 @@ input.die {
 .act.add-note {
   align-self: flex-start;
   border-style: dashed;
+}
+
+/* ---- looking back ----
+   A past level is drawn by the same components under a lock. The whole page
+   is tinted, the way the dark theme swaps the palette, so a tab left open on
+   level 1 cannot pass for the live sheet. Same worry the build stamp exists
+   for. The selectors outrank the theme blocks above by one attribute. */
+:root[data-looking-back] {
+  --ground: #e6dcc6;
+  --surface: #f3ebd9;
+  --sunk: #dccfb5;
+  --ink: #241c12;
+  --soft: #6b5a44;
+  --line: #c8b896;
+  --accent: #7b4a1c;
+  --accent-wash: #ecdfc6;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-looking-back]:not([data-theme="light"]) {
+    --ground: #171208;
+    --surface: #211a0f;
+    --sunk: #2b2315;
+    --ink: #e6dcc6;
+    --soft: #a69276;
+    --line: #3d3221;
+    --accent: #d8a660;
+    --accent-wash: #33270f;
+  }
+}
+:root[data-theme="dark"][data-looking-back] {
+  --ground: #171208;
+  --surface: #211a0f;
+  --sunk: #2b2315;
+  --ink: #e6dcc6;
+  --soft: #a69276;
+  --line: #3d3221;
+  --accent: #d8a660;
+  --accent-wash: #33270f;
+}
+
+/* Under the lock every control in the body is disabled by the fieldset.
+   Whatever adds, drops or acts is hidden; whatever holds a value reads as the
+   value, in ink, with nothing to say it was ever an input. */
+.looking-back .inline,
+.looking-back .drop,
+.looking-back .trophies li button,
+.looking-back .howto {
+  display: none;
+}
+.looking-back :disabled {
+  color: inherit;
+  -webkit-text-fill-color: inherit;
+  opacity: 1;
+  cursor: default;
+  pointer-events: none;
+}
+.looking-back .kit input::placeholder {
+  color: transparent;
+}
+.looking-back .kit .place {
+  color: var(--soft);
+}
+.looking-back .kit .place[aria-pressed="true"] {
+  color: var(--accent);
+}
+
+/* The level in the eyebrow, and the list it drops. It inherits the eyebrow's
+   small caps; the list resets them. */
+.levels {
+  display: inline-block;
+  position: relative;
+}
+.levels summary {
+  display: inline;
+  list-style: none;
+  cursor: pointer;
+  border-bottom: 1px dotted currentColor;
+}
+.levels summary::-webkit-details-marker {
+  display: none;
+}
+.levels summary:hover {
+  color: var(--ink);
+}
+.levels ul {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 5;
+  min-width: 230px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.14);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.levels li button {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 18px;
+  width: 100%;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 3px;
+  background: none;
+  color: var(--ink);
+  font-family: var(--data);
+  font-size: 12.5px;
+  text-align: left;
+  cursor: pointer;
+}
+.levels li button:hover {
+  background: var(--accent-wash);
+  color: var(--accent);
+}
+.levels li button[aria-current="true"] {
+  color: var(--accent);
+  font-weight: 600;
+}
+.levels li button small {
+  color: var(--soft);
+  font-size: 11px;
+  white-space: nowrap;
 }

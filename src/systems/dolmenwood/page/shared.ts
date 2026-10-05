@@ -1,5 +1,6 @@
 import type { CharacterDocument } from "../../../character.ts";
 import type { Patch, SaveState } from "../../../sheet/useCharacter.ts";
+import type { LevelEntry } from "../../../storage/store.ts";
 import type { Computed } from "../rules.ts";
 import type { Ability, SaveKind, Skill } from "../types.ts";
 
@@ -10,13 +11,32 @@ import type { Ability, SaveKind, Skill } from "../types.ts";
  * `editing` gates the parts that are read far more often than they are
  * changed. The play tracker and the kit ignore it: those are always live,
  * because a toggle in front of your hit points is a toggle you would leave on.
+ *
+ * `readOnly` says a past level is drawn. The lock itself is not this flag: the
+ * sheet puts everything below the masthead in a disabled fieldset, and the
+ * stylesheet hides what adds, drops or acts under `.looking-back`. The flag is
+ * for the few places that draw a value as plain text rather than as a dead
+ * control, and for the way back. `editing` is never on beside it.
  */
 export type SheetProps = {
   character: CharacterDocument;
   computed: Computed;
   patch: Patch;
   editing: boolean;
+  readOnly: boolean;
   status: SaveState;
+};
+
+/** The past levels on offer, which one is drawn, and how to move between them. */
+export type LookingBack = {
+  /** Every level the character has been saved at, lowest first. */
+  levels: LevelEntry[];
+  /** The past level drawn, or null when the sheet is now. */
+  at: LevelEntry | null;
+  /** The level of the live character, which the list calls now. */
+  nowLevel: number;
+  /** Draw a past level, or null for now. */
+  go: (level: number | null) => void;
 };
 
 /** Reads a number out of an input without letting a half-typed value through. */
@@ -69,6 +89,15 @@ export function percent(value: number): string {
 
 export function count(value: number): string {
   return value.toLocaleString("en-GB");
+}
+
+/** A timestamp as the day it fell on, in the reader's own time zone. */
+export function dayOf(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 /**
