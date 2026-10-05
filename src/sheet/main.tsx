@@ -81,7 +81,9 @@ function App() {
       </div>
     );
   }
-  if (!character) {
+  // The live level arrives with the live character, before any past level
+  // can be drawn, so both are missing only while loading.
+  if (!character || nowLevel === null) {
     return (
       <div class="problem">
         <p>Reading the character…</p>
@@ -93,7 +95,7 @@ function App() {
   const history: LookingBack = {
     levels,
     at: lookingAt,
-    nowLevel: nowLevel ?? character.level,
+    nowLevel,
     go,
   };
   return <Sheet character={character} patch={patch} status={status} lookingBack={history} />;
