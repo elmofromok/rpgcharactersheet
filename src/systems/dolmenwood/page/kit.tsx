@@ -34,7 +34,7 @@ function mirrored(item: KitItem, gold: number, arrows: number): string | null {
   return null;
 }
 
-export function Kit({ character, computed, patch }: SheetProps) {
+export function Kit({ character, computed, patch, readOnly }: SheetProps) {
   const enc = computed.encumbrance;
   const [name, setName] = useState("");
   const [note, setNote] = useState("");
@@ -65,18 +65,24 @@ export function Kit({ character, computed, patch }: SheetProps) {
           const place = placeOf(item);
           return (
             <li key={`${item.n}-${index}`}>
-              <input
-                class="kit-n"
-                type="text"
-                value={item.n}
-                aria-label={`name of ${item.n}`}
-                onInput={(e) => replace(index, { n: e.currentTarget.value })}
-              />
+              {readOnly ? (
+                <span class="kit-n">{item.n}</span>
+              ) : (
+                <input
+                  class="kit-n"
+                  type="text"
+                  value={item.n}
+                  aria-label={`name of ${item.n}`}
+                  onInput={(e) => replace(index, { n: e.currentTarget.value })}
+                />
+              )}
               <span class="kit-r">
                 {tracked ? (
                   <span class="num auto" title="kept in the play tracker">
                     {tracked}
                   </span>
+                ) : readOnly ? (
+                  item.t ? <span class="num">{item.t}</span> : null
                 ) : (
                   <input
                     class="num"
@@ -91,67 +97,77 @@ export function Kit({ character, computed, patch }: SheetProps) {
                 <span class="slots" title="gear slots">
                   {slots === 0 ? "no slot" : slots === 1 ? "1 slot" : `${slots} slots`}
                 </span>
-                <button
-                  type="button"
-                  class="place"
-                  aria-pressed={place === "equipped"}
-                  title={place === "equipped" ? "to hand; click to pack it" : "packed; click to have it to hand"}
-                  onClick={() =>
-                    replace(index, { where: place === "equipped" ? "stowed" : "equipped" })
-                  }
-                >
-                  {place}
-                </button>
-                <button
-                  type="button"
-                  class="drop"
-                  aria-label={`remove ${item.n}`}
-                  onClick={() => patch({ kit: character.kit.filter((_, i) => i !== index) })}
-                >
-                  &times;
-                </button>
+                {readOnly ? (
+                  <span class={place === "equipped" ? "place held" : "place"}>{place}</span>
+                ) : (
+                  <button
+                    type="button"
+                    class="place"
+                    aria-pressed={place === "equipped"}
+                    title={place === "equipped" ? "to hand; click to pack it" : "packed; click to have it to hand"}
+                    onClick={() =>
+                      replace(index, { where: place === "equipped" ? "stowed" : "equipped" })
+                    }
+                  >
+                    {place}
+                  </button>
+                )}
+                {readOnly ? null : (
+                  <button
+                    type="button"
+                    class="drop"
+                    aria-label={`remove ${item.n}`}
+                    onClick={() => patch({ kit: character.kit.filter((_, i) => i !== index) })}
+                  >
+                    &times;
+                  </button>
+                )}
               </span>
             </li>
           );
         })}
       </ul>
 
-      <div class="inline">
-        <input
-          type="text"
-          placeholder="item"
-          value={name}
-          onInput={(e) => setName(e.currentTarget.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              add();
-            }
-          }}
-        />
-        <input
-          type="text"
-          placeholder="note, optional"
-          value={note}
-          onInput={(e) => setNote(e.currentTarget.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              add();
-            }
-          }}
-        />
-        <button class="act" type="button" onClick={add}>
-          Add
-        </button>
-      </div>
+      {readOnly ? null : (
+        <>
+          <div class="inline">
+            <input
+              type="text"
+              placeholder="item"
+              value={name}
+              onInput={(e) => setName(e.currentTarget.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  add();
+                }
+              }}
+            />
+            <input
+              type="text"
+              placeholder="note, optional"
+              value={note}
+              onInput={(e) => setNote(e.currentTarget.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  add();
+                }
+              }}
+            />
+            <button class="act" type="button" onClick={add}>
+              Add
+            </button>
+          </div>
 
-      <p class="note">
-        Click a line to rewrite it and the cross to drop it. Arrows and coin are kept in the play
-        tracker, so those two lines follow it. A line with no rating after it counts for nothing
-        in a fight. Click <i>equipped</i> or <i>stowed</i> to move a line between your hands and
-        your pack; it changes your Speed.
-      </p>
+          <p class="note">
+            Click a line to rewrite it and the cross to drop it. Arrows and coin are kept in the
+            play tracker, so those two lines follow it. A line with no rating after it counts for
+            nothing in a fight. Click <i>equipped</i> or <i>stowed</i> to move a line between your
+            hands and your pack; it changes your Speed.
+          </p>
+        </>
+      )}
 
       <p class="note">
         Equipped {enc.equipped} of {enc.equippedLimit} slots, stowed {enc.stowed} of{" "}

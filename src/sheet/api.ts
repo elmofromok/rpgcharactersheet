@@ -1,5 +1,5 @@
 import type { CharacterDocument } from "../character.ts";
-import type { CharacterSummary, Revision } from "../storage/store.ts";
+import type { CharacterSummary, LevelEntry, Revision } from "../storage/store.ts";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(path, {
@@ -30,4 +30,12 @@ export function saveCharacter(character: CharacterDocument): Promise<Revision> {
     method: "PUT",
     body: JSON.stringify(character),
   });
+}
+
+export function fetchLevels(id: string): Promise<LevelEntry[]> {
+  return request<LevelEntry[]>(`/api/characters/${id}/levels`);
+}
+
+export function fetchRevision(id: string, revision: number): Promise<CharacterDocument> {
+  return request<CharacterDocument>(`/api/characters/${id}/revisions/${revision}`);
 }
