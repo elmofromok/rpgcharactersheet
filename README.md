@@ -2,11 +2,10 @@
 
 Character sheets for tabletop RPGs, editable during play.
 
-The sheet is moving from a published Claude artifact to a local server with
-the character in SQLite, so nothing about a character leaves this machine. See
-[ADR-0001](docs/adr/0001-local-server-and-sqlite.md). Both exist at the moment:
-the artifact is still the one you play from, and the local sheet is being
-written.
+A local server on this machine serves the sheet, with the character in SQLite,
+so nothing about a character leaves the laptop. It began life as a published
+Claude artifact; [ADR-0001](docs/adr/0001-local-server-and-sqlite.md) records
+why it moved.
 
 Currently one character: Moggle Fluff-a-kin, a grimalkin hunter in Dolmenwood.
 
@@ -14,7 +13,6 @@ Currently one character: Moggle Fluff-a-kin, a grimalkin hunter in Dolmenwood.
 
 ```
 characters/<id>.json    one character, written by hand: the seed the database is imported from
-sheet/<system>.html     the page: markup, styles, and the play tracker script
 src/systems/<system>/   the system rules: the tables, and what is computed from them
 src/systems/<system>/page/  the system page: the components that draw a sheet
 src/storage/            the database: every character, and every revision of one
@@ -23,7 +21,6 @@ src/import.ts           character file -> characters.db, once
 src/server.ts           the local server: owns the database, serves the sheet
 src/server/             the API, and serving the built page
 src/sheet/              the page shell, the stylesheet, and the vendored fonts
-build.mjs               character + template -> dist/<id>.html, for the artifact
 dist/                   build output, not committed
 ```
 
@@ -134,8 +131,8 @@ npm test        the tests alone
 Only the rules and the store are tested, and deliberately. A broken layout is
 visible the moment the page opens; a saving throw one too high is not, and a
 save that quietly drops a field is not either. The rules tests pin every number
-the published sheet currently shows, so a bad transcription fails here rather
-than at the table.
+Moggle's sheet showed when she was created, so a bad transcription fails here
+rather than at the table.
 
 ## The database
 
@@ -171,50 +168,16 @@ its file, and a field missing from the file comes from the system defaults.
 That chain is what lets a character saved before a field existed pick the field
 up instead of breaking, and it is why the old `start` block is gone.
 
-## The part that is not solved yet
+## Build stamp
 
-The published page saves by republishing its own entire document, state block
-included. So the same numbers live in two places: this repo, and the live
-artifact. They drift the moment anyone plays.
+The page footer carries `Build <commit> · <date>`, and `+ uncommitted changes`
+when the tree was dirty. The stamp uses the commit's date rather than today's,
+so rebuilding the same commit gives the same stamp, and it ignores
+`characters/`, because a character changing is play rather than an edit to the
+sheet.
 
-Until the local sheet replaces it, the artifact is still the one you play
-from, and it is built by `build.mjs` rather than by Vite:
-
-```
-node build.mjs                     every character
-node build.mjs moggle-fluff-a-kin  one
-```
-
-Commit before you build. The page footer carries a build stamp naming the
-commit it came from, so a build from a dirty tree is labelled
-`+ uncommitted changes` on the published sheet. The stamp uses the commit's
-date rather than today's, so rebuilding the same commit gives the same stamp.
-
-The output in `dist/` is the page body, with no `<html>` or `<body>` wrapper,
-because that is what the Claude artifact publisher expects. `build.mjs` is
-transitional: characters are flat documents whose numbers are computed, but
-the published page still wants the old play-state block, so the build projects
-one onto the other. It goes when the artifact does.
-
-Publishing follows this order, and skipping the first step silently reverts
-whatever happened at the table:
-
-1. Read the live artifact and copy its state block onto the matching top-level
-   fields of `characters/<id>.json`. Same names, except that the block's
-   `notes` is the file's `journal`, and its `hpMax` is dropped because maximum
-   hit points are computed now
-2. Commit
-3. `node build.mjs <id>`
-4. Publish `dist/<id>.html` to the artifact URL
-
-If a published sheet ever looks wrong, read the build stamp in its footer
-first. It names the commit, and an old browser tab reports the build it was
-made from even after a session of saving itself.
-
-The local sheet now reads, and shows every number computed rather than
-stored. What is left is editing it, the notes, and then retiring the artifact,
-which is the rest of issue #1. Until that last step, the procedure above is
-the real one and the artifact is what you play from.
+If the sheet ever looks wrong, read the stamp first. An old browser tab looks
+identical to a fresh one and reports the build it was made from.
 
 ## Rules
 

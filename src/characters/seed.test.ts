@@ -90,7 +90,7 @@ describe("reading a character file", () => {
 describe("the character file in this repo", () => {
   const moggle = hydrate(readCharacterFile("characters/moggle-fluff-a-kin.json"));
 
-  test("hydrates to the character the published sheet shows", () => {
+  test("hydrates to Moggle as she stands", () => {
     assert.equal(moggle.name, "Moggle Fluff-a-kin");
     assert.equal(moggle.kindred, "grimalkin");
     assert.equal(moggle.class, "hunter");

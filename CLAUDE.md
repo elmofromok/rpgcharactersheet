@@ -1,7 +1,7 @@
 # rpgcharactersheet
 
-Character sheets built as self-contained HTML pages and published as Claude
-artifacts, so they can be edited during play.
+Character sheets served by a local Node server, with the character in SQLite,
+so they can be edited during play and nothing leaves this machine.
 
 ## Running the local sheet
 
@@ -11,27 +11,6 @@ type checks and runs the tests.
 
 The server owns the database. Do not read or write `characters.db` from
 anywhere else while it is running.
-
-## Publishing a sheet
-
-The published page saves itself by republishing its entire document, state
-block included. The live artifact therefore holds play state that this repo
-does not, and publishing without reading the artifact first silently reverts
-whatever happened at the table. This has nearly gone wrong several times.
-
-Always, in this order:
-
-1. Read the live artifact: the `Artifact` tool with `action: "read"` and the
-   `artifact` URL from `characters/<id>.json`
-2. Copy its `#state` values onto the matching top-level fields of
-   `characters/<id>.json`. They are the same names, with two exceptions: the
-   block's `notes` is the file's `journal`, and its `hpMax` is dropped, because
-   maximum hit points are now computed from `hitDice` and Constitution
-3. Commit, so the build stamp names a real commit rather than a dirty tree
-4. `node build.mjs <id>`
-5. Publish `dist/<id>.html` to that same artifact URL
-
-Step 1 is the one that matters. Skipping it loses the user's play session.
 
 ## Character files
 
@@ -52,8 +31,8 @@ never be written down, or there will be two answers to the same question.
 ## Build stamp
 
 Every build carries `Build <commit> · <date>` in the page footer, and
-`+ uncommitted changes` when built from a dirty working tree. When a published
-sheet looks wrong, read that stamp before debugging: an old browser tab looks
+`+ uncommitted changes` when built from a dirty working tree. When the sheet
+looks wrong, read that stamp before debugging: an old browser tab looks
 identical to a current one and reports the build it was made from.
 
 ## Agent skills

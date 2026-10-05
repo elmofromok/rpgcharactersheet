@@ -33,8 +33,8 @@ function only<T>(list: T[]): T {
   return item;
 }
 
-// Moggle Fluff-a-kin as created, which is also every number the published
-// sheet shows. If a change here breaks these, the sheet was wrong or is now.
+// Moggle Fluff-a-kin as created, which is also every number her original
+// sheet showed. If a change here breaks these, the sheet was wrong or is now.
 function moggle(over: Partial<RulesInput> = {}): RulesInput {
   return {
     kindred: "grimalkin",
