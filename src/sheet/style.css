@@ -76,9 +76,6 @@ body {
   padding: 0;
   min-width: 0;
 }
-.right {
-  min-width: 0;
-}
 @media (max-width: 1180px) {
   .layout {
     grid-template-columns: 1fr;
@@ -122,26 +119,29 @@ h1 {
   font-weight: 600;
 }
 
-/* ---- two-column body ---- */
-.columns {
-  display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 30px;
-  margin-top: 26px;
-  align-items: start;
-}
-@media (max-width: 840px) {
-  .columns {
-    grid-template-columns: 1fr;
-    gap: 26px;
-  }
-}
-.rail,
-.main {
+/* ---- the bands on the right ----
+   One column of cards. A band is two cards side by side; it folds to one
+   where the cards would be narrower than their numbers want. */
+.right {
   display: flex;
   flex-direction: column;
   gap: 22px;
   min-width: 0;
+  /* The bands fold on this column's own width, not the viewport's, so a
+     narrow column beside the tracker folds the same as a narrow phone. */
+  container: right / inline-size;
+}
+.band {
+  display: grid;
+  /* minmax(0, …), or a card's widest line would grow its track past the column. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+@container right (width < 680px) {
+  .band {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .card {
@@ -205,47 +205,36 @@ h1 {
   margin-bottom: 2px;
 }
 
-/* ---- ability table ---- */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-variant-numeric: tabular-nums;
+/* ---- ability row ----
+   Six cells across, as on paper. Three across where six would crush the
+   captions, two on a phone. Each range is bounded, so no rule undoes
+   another; the first cell of every row loses its left border. */
+.abilities {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-th {
-  font-family: var(--data);
-  font-size: 10px;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-  color: var(--soft);
+.abilities li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 2px 14px 4px;
+  border-left: 1px solid var(--line);
+  min-width: 0;
+}
+.abilities li:first-child {
+  padding-left: 0;
+  border-left: none;
+}
+.abilities .ability {
   font-weight: 500;
-  text-align: right;
-  padding: 0 0 8px;
-}
-th:first-child {
-  text-align: left;
-}
-td {
-  border-top: 1px solid var(--line);
-  padding: 9px 0;
-  text-align: right;
-  font-family: var(--data);
-  font-size: 14px;
-}
-td:first-child {
-  text-align: left;
-  font-family: var(--body);
   font-size: 15px;
-  font-weight: 500;
   letter-spacing: 0.02em;
 }
-td.same {
-  color: var(--soft);
-}
-tr.flag td {
-  color: var(--warn);
-  font-weight: 600;
-}
-tr.prime td:first-child::after {
+.abilities .prime .ability::after {
   content: "prime";
   font-family: var(--data);
   font-size: 9px;
@@ -254,6 +243,63 @@ tr.prime td:first-child::after {
   color: var(--accent);
   margin-left: 7px;
   vertical-align: 2px;
+}
+.abilities .figures {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--data);
+  font-variant-numeric: tabular-nums;
+}
+.abilities .score {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.abilities .mod {
+  font-size: 14px;
+}
+.abilities .mod.same {
+  color: var(--soft);
+}
+/* A negative modifier: score and modifier in the warning colour, as the old
+   table's whole row was. The name and caption stay in ink. */
+.abilities .flag .figures {
+  color: var(--warn);
+  font-weight: 600;
+}
+.abilities small {
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--soft);
+}
+.abilities .sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@container right (440px <= width < 900px) {
+  .abilities {
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 16px;
+  }
+  .abilities li:nth-child(3n + 1) {
+    padding-left: 0;
+    border-left: none;
+  }
+}
+@container right (width < 440px) {
+  .abilities {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 16px;
+  }
+  .abilities li:nth-child(odd) {
+    padding-left: 0;
+    border-left: none;
+  }
 }
 
 /* ---- stat rows ---- */
@@ -654,10 +700,9 @@ input.fact {
   padding: 1px 5px;
 }
 input.score {
-  width: 5ch;
+  width: 3ch;
   text-align: right;
   font-family: var(--data);
-  font-size: 14px;
   background: var(--ground);
   border: 1px solid var(--line);
   border-radius: 3px;

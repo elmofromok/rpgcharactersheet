@@ -11,7 +11,7 @@ import { Kit } from "./kit.tsx";
 import { KINDRED_PAGES } from "./kindred.tsx";
 import { ANCHORS } from "./anchors.ts";
 import { NoteCard, Notes, NotesProvider, OrphanedNotes } from "./notes.tsx";
-import { Abilities, Combat, Particulars, SavingThrows, Skills } from "./rail.tsx";
+import { Abilities, Combat, Particulars, SavingThrows, Skills } from "./stats.tsx";
 import { count, dayOf, percent, type LookingBack, type SheetProps } from "./shared.ts";
 import { Tracker } from "./tracker.tsx";
 
@@ -258,34 +258,33 @@ export function Sheet({
             <Tracker {...props} />
           </div>
 
+          {/* Bands, in the paper sheet's order: abilities across the top,
+              then the combat numbers, then the skills, then everything else. */}
           <div class="right">
-            <div class="columns">
-              <div class="rail">
-                <Abilities {...props} />
-                <Combat {...props} />
-                <SavingThrows {...props} />
-                <Skills {...props} />
-                <Particulars {...props} />
-              </div>
-
-              <div class="main">
-                <Kit {...props} />
-                {KindredPage ? (
-                  <KindredPage {...props} />
-                ) : (
-                  <Unsupported what="Kindred" name={character.kindred} />
-                )}
-                {ClassPage ? (
-                  <ClassPage {...props} />
-                ) : (
-                  <Unsupported what="Class" name={character.class} />
-                )}
-
-                <NoteCard at="page.appearance" title="Appearance and bearing" />
-
-                <OrphanedNotes known={KNOWN_ANCHORS} />
-              </div>
+            <Abilities {...props} />
+            <div class="band">
+              <Combat {...props} />
+              <SavingThrows {...props} />
             </div>
+            <div class="band">
+              <Skills {...props} />
+              <Particulars {...props} />
+            </div>
+            <Kit {...props} />
+            {KindredPage ? (
+              <KindredPage {...props} />
+            ) : (
+              <Unsupported what="Kindred" name={character.kindred} />
+            )}
+            {ClassPage ? (
+              <ClassPage {...props} />
+            ) : (
+              <Unsupported what="Class" name={character.class} />
+            )}
+
+            <NoteCard at="page.appearance" title="Appearance and bearing" />
+
+            <OrphanedNotes known={KNOWN_ANCHORS} />
           </div>
         </fieldset>
 
