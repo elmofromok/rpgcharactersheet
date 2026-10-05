@@ -24,7 +24,7 @@ function levelFromSearch(): number | null {
  * back button leaves the past the way it was entered and a past level can be
  * bookmarked or sent.
  */
-function useLevelParam(): [number | null, (level: number | null) => void] {
+function useLevelParam(): [number | null, (level: number | null, replace?: boolean) => void] {
   const [level, setLevel] = useState(levelFromSearch);
 
   useEffect(() => {
@@ -33,11 +33,14 @@ function useLevelParam(): [number | null, (level: number | null) => void] {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  const go = useCallback((next: number | null) => {
+  // `replace` rewrites the current entry instead of adding one, for a URL
+  // the page corrects rather than one the reader chose.
+  const go = useCallback((next: number | null, replace = false) => {
     const url = new URL(window.location.href);
     if (next === null) url.searchParams.delete("level");
     else url.searchParams.set("level", String(next));
-    window.history.pushState(null, "", url);
+    if (replace) window.history.replaceState(null, "", url);
+    else window.history.pushState(null, "", url);
     setLevel(next);
   }, []);
 
@@ -51,6 +54,13 @@ function App() {
     level,
   );
   const lookingBack = level !== null;
+
+  // The live level is not a past one. A URL that names it, typed by hand or
+  // kept from before, would draw the same sheet frozen, with nothing in the
+  // level menu to call current. It is read as now instead.
+  useEffect(() => {
+    if (level !== null && nowLevel !== null && level === nowLevel) go(null, true);
+  }, [level, nowLevel, go]);
 
   // On the root element, so the tint reaches the page background and not
   // only the sheet. See the looking-back palette in style.css.
