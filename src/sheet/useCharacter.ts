@@ -51,6 +51,9 @@ export function useCharacter(id: string | null, level: number | null): Loaded {
   const [character, setCharacter] = useState<CharacterDocument | null>(null);
   const [status, setStatus] = useState<SaveState>("loading");
   const [problem, setProblem] = useState<string | null>(null);
+  // A past level that could not be read. Kept apart from `problem` so that
+  // coming back to now, or picking another level, leaves it behind.
+  const [pastProblem, setPastProblem] = useState<string | null>(null);
   // Null until the first list arrives, so a level asked for in the URL can wait
   // for it rather than be declared missing.
   const [levels, setLevels] = useState<LevelEntry[] | null>(null);
@@ -133,12 +136,15 @@ export function useCharacter(id: string | null, level: number | null): Loaded {
           setProblem("No characters in the database yet. Import one: npm run import");
           return;
         }
-        const [loaded, history] = await Promise.all([fetchCharacter(wanted), fetchLevels(wanted)]);
+        const loaded = await fetchCharacter(wanted);
         latest.current = loaded;
         written.current = JSON.stringify(loaded);
         setCharacter(loaded);
-        setLevels(history);
         setStatus("saved");
+        // The list only feeds the level menu. If it cannot be read the sheet
+        // is still the sheet, and a level asked for in the URL is reported
+        // missing rather than waited for.
+        setLevels(await fetchLevels(wanted).catch(() => []));
       } catch (err) {
         setProblem(err instanceof Error ? err.message : String(err));
       }
@@ -154,6 +160,7 @@ export function useCharacter(id: string | null, level: number | null): Loaded {
       : null;
 
   useEffect(() => {
+    setPastProblem(null);
     if (!entry) {
       setPast(null);
       return;
@@ -166,7 +173,7 @@ export function useCharacter(id: string | null, level: number | null): Loaded {
         const document = await fetchRevision(current.id, entry.revision);
         if (!stale) setPast({ entry, document });
       } catch (err) {
-        if (!stale) setProblem(err instanceof Error ? err.message : String(err));
+        if (!stale) setPastProblem(err instanceof Error ? err.message : String(err));
       }
     })();
     return () => {
@@ -204,8 +211,10 @@ export function useCharacter(id: string | null, level: number | null): Loaded {
   const shown = past && past.entry.level === level ? past : null;
   return {
     character: shown?.document ?? null,
-    status: "readonly",
-    problem: problem ?? missing,
+    // A live save that failed is not hidden behind "read only": the edit is
+    // still only in this page, and the reader should know before closing it.
+    status: status === "failed" ? "failed" : "readonly",
+    problem: problem ?? pastProblem ?? missing,
     patch: ignore,
     levels: levels ?? [],
     lookingAt: shown?.entry ?? null,
