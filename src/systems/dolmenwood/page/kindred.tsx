@@ -7,6 +7,7 @@
 
 import { sign, type SheetProps } from "./shared.ts";
 import { kindred } from "../rules.ts";
+import { Notes } from "./notes.tsx";
 import type { JSX } from "preact";
 
 function Grimalkin({ character, computed }: SheetProps): JSX.Element {
@@ -27,6 +28,8 @@ function Grimalkin({ character, computed }: SheetProps): JSX.Element {
         armour class improves by {sign(kin.acVersusLarge)} against big things in melee.
       </p>
 
+      <Notes at="kindred.what" />
+
       <div class="entry">
         <span class="tag">Chester form</span>
         <h3>Turn into a fat house cat</h3>
@@ -36,6 +39,7 @@ function Grimalkin({ character, computed }: SheetProps): JSX.Element {
           you can only shift back when nothing sentient is watching. It is a scouting and hiding
           tool, not a combat one.
         </p>
+        <Notes at="kindred.chester" />
       </div>
 
       <div class="entry">
@@ -54,6 +58,7 @@ function Grimalkin({ character, computed }: SheetProps): JSX.Element {
             is dead. Ask your referee whether they will read the trigger as 1 hit point or fewer.
           </p>
         ) : null}
+        <Notes at="kindred.wilder" />
       </div>
 
       <div class="entry">
@@ -82,6 +87,7 @@ function Grimalkin({ character, computed }: SheetProps): JSX.Element {
             Like every glamour it needs no words or gestures, cannot be disrupted, and costs
             your action for the round.
           </p>
+          <Notes at="kindred.glamour" />
         </div>
       ) : null}
 
@@ -94,6 +100,7 @@ function Grimalkin({ character, computed }: SheetProps): JSX.Element {
           the ledger: eat a giant rodent over the course of a turn and you get a hit point back.
           It is not dignified. Take it anyway.
         </p>
+        <Notes at="kindred.oddments" />
       </div>
     </section>
   );

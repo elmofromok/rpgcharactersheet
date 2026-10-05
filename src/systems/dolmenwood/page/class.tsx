@@ -4,6 +4,7 @@
 import type { JSX } from "preact";
 
 import { characterClass, xpThreshold } from "../rules.ts";
+import { Notes } from "./notes.tsx";
 import { count, percent, sign, type SheetProps } from "./shared.ts";
 
 function Hunter({ character, computed }: SheetProps): JSX.Element {
@@ -30,8 +31,9 @@ function Hunter({ character, computed }: SheetProps): JSX.Element {
             that means {count(computed.xpToNextLevel)} awarded before it lands.
           </p>
         ) : (
-          <p style="margin-top:8px">You are at the maximum level a grimalkin reaches.</p>
+          <p style="margin-top:8px">You are at the top of the hunter table. There is no level 16.</p>
         )}
+        <Notes at="class.aptitude" />
       </div>
 
       <div class="entry">
@@ -42,6 +44,7 @@ function Hunter({ character, computed }: SheetProps): JSX.Element {
           you need 4 or more. Yours is {sign(computed.abilityModifiers.cha)}. One companion at a
           time, and it is loyal.
         </p>
+        <Notes at="class.companion" />
       </div>
 
       <div class="entry">
@@ -52,6 +55,7 @@ function Hunter({ character, computed }: SheetProps): JSX.Element {
           against {sign(computed.attack.melee)} in melee. The hunter's equipment entry settles the
           question of longbows for a Small character: a shortbow goes in its place.
         </p>
+        <Notes at="class.missile" />
       </div>
 
       <div class="entry">
@@ -61,6 +65,7 @@ function Hunter({ character, computed }: SheetProps): JSX.Element {
           Harvested trophies grant combat bonuses later. Keep the list in the play tracker from
           your first session.
         </p>
+        <Notes at="class.trophies" />
       </div>
 
       <div class="entry">
@@ -71,6 +76,7 @@ function Hunter({ character, computed }: SheetProps): JSX.Element {
           own as you level. These are the rolls that turn a trackless wood into somewhere you can
           navigate, so make them constantly rather than saving them for emergencies.
         </p>
+        <Notes at="class.skills" />
       </div>
     </section>
   );

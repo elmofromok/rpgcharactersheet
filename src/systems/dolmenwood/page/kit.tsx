@@ -7,8 +7,9 @@
 
 import { useState } from "preact/hooks";
 
-import { rate } from "../rules.ts";
+import { placeOf, rate, slotsOf } from "../rules.ts";
 import type { Gear, KitItem } from "../types.ts";
+import { Notes } from "./notes.tsx";
 import { sign, type SheetProps } from "./shared.ts";
 
 function badge(gear: Gear | null): string | null {
@@ -34,6 +35,7 @@ function mirrored(item: KitItem, gold: number, arrows: number): string | null {
 }
 
 export function Kit({ character, computed, patch }: SheetProps) {
+  const enc = computed.encumbrance;
   const [name, setName] = useState("");
   const [note, setNote] = useState("");
 
@@ -59,6 +61,8 @@ export function Kit({ character, computed, patch }: SheetProps) {
         {character.kit.map((item, index) => {
           const tracked = mirrored(item, character.gold, character.arrows);
           const rating = badge(rate(item));
+          const slots = slotsOf(item, character);
+          const place = placeOf(item);
           return (
             <li key={`${item.n}-${index}`}>
               <input
@@ -84,6 +88,20 @@ export function Kit({ character, computed, patch }: SheetProps) {
                   />
                 )}
                 {rating ? <span class="rating">{rating}</span> : null}
+                <span class="slots" title="gear slots">
+                  {slots === 0 ? "no slot" : slots === 1 ? "1 slot" : `${slots} slots`}
+                </span>
+                <button
+                  type="button"
+                  class="place"
+                  aria-pressed={place === "equipped"}
+                  title={place === "equipped" ? "to hand; click to pack it" : "packed; click to have it to hand"}
+                  onClick={() =>
+                    replace(index, { where: place === "equipped" ? "stowed" : "equipped" })
+                  }
+                >
+                  {place}
+                </button>
                 <button
                   type="button"
                   class="drop"
@@ -131,7 +149,15 @@ export function Kit({ character, computed, patch }: SheetProps) {
       <p class="note">
         Click a line to rewrite it and the cross to drop it. Arrows and coin are kept in the play
         tracker, so those two lines follow it. A line with no rating after it counts for nothing
-        in a fight.
+        in a fight. Click <i>equipped</i> or <i>stowed</i> to move a line between your hands and
+        your pack; it changes your Speed.
+      </p>
+
+      <p class="note">
+        Equipped {enc.equipped} of {enc.equippedLimit} slots, stowed {enc.stowed} of{" "}
+        {enc.stowedLimit}. Speed <b>{enc.speed}</b>
+        {enc.over ? `, and you are over the ${enc.over} limit.` : "."} Coins bundle 100 to a slot and
+        arrows 20, so both lines follow the tracker.
       </p>
 
       <h3 style="margin-top:22px">What you can hold</h3>
@@ -158,6 +184,7 @@ export function Kit({ character, computed, patch }: SheetProps) {
           the sheet is not counting it.
         </p>
       ) : null}
+      <Notes at="kit" />
     </section>
   );
 }

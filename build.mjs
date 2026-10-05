@@ -15,7 +15,7 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 import { hydrate, readCharacterFile } from "./src/characters/seed.ts";
-import { maxHitPoints } from "./src/systems/dolmenwood/rules.ts";
+import { encumbrance, maxHitPoints } from "./src/systems/dolmenwood/rules.ts";
 import { buildStamp } from "./src/stamp.ts";
 
 // The play-state block the published page reads. Hit points per level are
@@ -42,17 +42,25 @@ function build(file) {
   const templateName = `${character.system}.html`;
   const template = readFileSync(join("sheet", templateName), "utf8");
 
-  for (const token of ["{{STATE}}", "{{START}}", "{{BUILD}}"]) {
+  for (const token of ["{{STATE}}", "{{START}}", "{{BUILD}}", "{{SPEED}}"]) {
     if (!template.includes(token)) throw new Error(`${templateName}: no ${token}`);
   }
 
   // Both tokens get the same object. START is only the page's fallback for a
   // field STATE is missing, and STATE is never missing one.
   const state = JSON.stringify(playState(character));
+  // Speed is worked out from the kit at build time. The artifact's kit is
+  // live-edited at the table and this line is not, so it says so.
+  const enc = encumbrance(character);
+  const speed =
+    `${enc.speed}<small>slot encumbrance &middot; ${enc.equipped} of ${enc.equippedLimit} equipped, ` +
+    `${enc.stowed} of ${enc.stowedLimit} stowed<br>counted at build ${stamp.replace(/^Build /, "")}; ` +
+    `recount if the kit changes</small>`;
   const html = template
     .replace("{{STATE}}", () => state)
     .replace("{{START}}", () => state)
-    .replace("{{BUILD}}", () => stamp);
+    .replace("{{BUILD}}", () => stamp)
+    .replace("{{SPEED}}", () => speed);
 
   if (html.includes("{{")) throw new Error(`${character.id}: unreplaced token left in output`);
 

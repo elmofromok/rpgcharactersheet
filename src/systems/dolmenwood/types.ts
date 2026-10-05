@@ -17,10 +17,15 @@ export type Saves = Record<SaveKind, number>;
  * match in the equipment table is unrated: `rate` returns null for it, and it
  * contributes nothing rather than counting as zero.
  */
+export type Bulk = "light" | "medium" | "heavy";
+
+/** Where a kit item sits: to hand, or packed away in a container. */
+export type Place = "equipped" | "stowed";
+
 export type Gear =
-  | { kind: "armour"; ac: number }
+  | { kind: "armour"; ac: number; bulk: Bulk }
   | { kind: "shield"; bonus: number }
-  | { kind: "weapon"; damage: string; hands: 1 | 2; small: boolean }
+  | { kind: "weapon"; damage: string; hands: 1 | 2; small: boolean; missile?: boolean }
   | { kind: "none" };
 
 export type KitItem = {
@@ -30,6 +35,10 @@ export type KitItem = {
   auto?: "gold" | "arrows";
   /** Overrides the equipment table, for anything the book does not list. */
   gear?: Gear;
+  /** Recorded: the player decides what is to hand. Absent, fighting gear is equipped and the rest is stowed. */
+  where?: Place;
+  /** Overrides the slot cost the rules would work out, for a line the general rule gets wrong. */
+  slots?: number;
 };
 
 /**
@@ -48,4 +57,7 @@ export type RulesInput = {
   /** Which glamour this character rolled, if their kindred has any. */
   glamour?: string;
   kit: KitItem[];
+  /** Play values the rules read: coins and arrows take slots in bundles. */
+  gold?: number;
+  arrows?: number;
 };

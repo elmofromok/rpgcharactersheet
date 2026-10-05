@@ -3,12 +3,21 @@
 
 import {
   ABILITY_MODIFIERS,
+  ARMOUR_SLOTS,
   CLASSES,
+  CONTAINERS,
   DEFAULT_SKILL_TARGET,
   EQUIPMENT,
+  EQUIPPED_SLOTS,
   GLAMOURS,
   KINDREDS,
   SKILLS,
+  SLOT_BUNDLES,
+  SPEED_BY_EQUIPPED_SLOTS,
+  SPEED_BY_STOWED_SLOTS,
+  STOWED_SLOTS,
+  TINY_ITEMS,
+  TWO_HANDED_MELEE_SLOTS,
   UNARMOURED_AC,
   XP_MODIFIERS,
   type CharacterClass,
@@ -19,6 +28,7 @@ import type {
   Ability,
   Gear,
   KitItem,
+  Place,
   RulesInput,
   Saves,
   Skill,
@@ -51,8 +61,9 @@ export function kindred(input: RulesInput): Kindred {
   return k;
 }
 
+/** The last level of the class table. Kindreds do not cap it. */
 export function maxLevel(input: RulesInput): number {
-  return Math.min(characterClass(input).levels.length, kindred(input).maxLevel);
+  return characterClass(input).levels.length;
 }
 
 /** A level outside the character's range is read as the nearest one that exists. */
@@ -293,6 +304,85 @@ export function loadouts(input: RulesInput): Loadout[] {
   return out;
 }
 
+/**
+ * Where a line sits unless the player has said. Fighting gear and the belt
+ * pouch are to hand; everything else is in the pack.
+ */
+export function placeOf(item: KitItem): Place {
+  if (item.where) return item.where;
+  if (item.auto) return "equipped";
+  const gear = rate(item);
+  return gear ? "equipped" : "stowed";
+}
+
+function mentions(item: KitItem, words: string[]): boolean {
+  const hay = normalise(item.n);
+  return words.some((w) => hay.includes(` ${normalise(w).trim()} `));
+}
+
+/**
+ * Gear slots one kit line occupies. The book's rule is 1 per object, with
+ * exceptions for armour by bulk, two-handed melee weapons, bundles, tiny
+ * things and containers in use. A line the rule gets wrong carries its own
+ * `slots`, which wins outright.
+ */
+export function slotsOf(item: KitItem, input: Pick<RulesInput, "gold" | "arrows">): number {
+  if (typeof item.slots === "number") return Math.max(0, item.slots);
+  if (item.auto === "gold") return Math.ceil((input.gold ?? 0) / SLOT_BUNDLES.coins);
+  if (item.auto === "arrows") return Math.ceil((input.arrows ?? 0) / SLOT_BUNDLES.ammunition);
+  const gear = rate(item);
+  if (gear?.kind === "armour") return ARMOUR_SLOTS[gear.bulk];
+  if (gear?.kind === "shield") return 1;
+  if (gear?.kind === "weapon") return gear.hands === 2 && !gear.missile ? TWO_HANDED_MELEE_SLOTS : 1;
+  if (mentions(item, TINY_ITEMS)) return 0;
+  if (mentions(item, CONTAINERS)) return 0;
+  return 1;
+}
+
+export type Encumbrance = {
+  equipped: number;
+  stowed: number;
+  equippedLimit: number;
+  stowedLimit: number;
+  /** The Speed each column gives on its own. */
+  equippedSpeed: number;
+  stowedSpeed: number;
+  /** The slower of the two, and 0 past either limit. */
+  speed: number;
+  /** Which column is past its limit, if one is. */
+  over: Place | null;
+};
+
+function speedFor(bands: Array<{ min: number; max: number; value: number }>, slots: number): number {
+  for (const b of bands) {
+    if (slots >= b.min && slots <= b.max) return b.value;
+  }
+  return 0;
+}
+
+/** Slot encumbrance: what is carried, where, and how fast that leaves you. */
+export function encumbrance(input: RulesInput): Encumbrance {
+  let equipped = 0;
+  let stowed = 0;
+  for (const item of input.kit) {
+    const slots = slotsOf(item, input);
+    if (placeOf(item) === "equipped") equipped += slots;
+    else stowed += slots;
+  }
+  const equippedSpeed = speedFor(SPEED_BY_EQUIPPED_SLOTS, equipped);
+  const stowedSpeed = speedFor(SPEED_BY_STOWED_SLOTS, stowed);
+  return {
+    equipped,
+    stowed,
+    equippedLimit: EQUIPPED_SLOTS,
+    stowedLimit: STOWED_SLOTS,
+    equippedSpeed,
+    stowedSpeed,
+    speed: Math.min(equippedSpeed, stowedSpeed),
+    over: equipped > EQUIPPED_SLOTS ? "equipped" : stowed > STOWED_SLOTS ? "stowed" : null,
+  };
+}
+
 export type Computed = {
   maxLevel: number;
   abilityModifiers: Record<Ability, number>;
@@ -309,6 +399,7 @@ export type Computed = {
   glamourCoinCap: number;
   loadouts: Loadout[];
   unrated: KitItem[];
+  encumbrance: Encumbrance;
 };
 
 /** Everything the page needs, in one pass. */
@@ -334,5 +425,6 @@ export function computed(input: RulesInput): Computed {
     glamourCoinCap: glamourCoinCap(input),
     loadouts: loadouts(input),
     unrated: unratedItems(input),
+    encumbrance: encumbrance(input),
   };
 }

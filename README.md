@@ -67,6 +67,32 @@ The warning that wilder form cannot be reached appears when maximum hit points
 are below 3 and disappears when they are not, instead of sitting on the page
 after it stops being true.
 
+## Notes
+
+Prose about one character is a note, and it lives on the character rather than
+in the page. A note is an id, an anchor, a tone and a Markdown body.
+
+The anchor decides where it renders. A rule anchor puts it beneath the rule it
+qualifies, so a remark about wilder form sits under wilder form where it is
+useful. A page anchor houses notes that qualify no rule. The anchors a
+Dolmenwood sheet offers are listed in
+`src/systems/dolmenwood/page/anchors.ts`, and a note whose anchor no longer
+exists is collected at the bottom of the sheet rather than silently vanishing.
+
+The tone is `plain`, `aside` or `warning`, and it is a field rather than
+styling inside the sentence. Colouring a warning never means editing the prose,
+which matters because these paragraphs are the ones most likely to be rewritten
+later, by hand or by an agent.
+
+Every note carries a stable, readable id, so revising one means replacing the
+note with that id instead of adding a second copy of nearly the same paragraph.
+
+Markdown is rendered by [snarkdown](https://github.com/developit/snarkdown), a
+kilobyte of it. Inline code maps onto the dice-roll style the rest of the sheet
+uses, so a backticked `2d6` needs no markup of its own. It does not sanitise
+and does not need to: a note is the owner's prose, on the owner's machine, in
+the owner's browser.
+
 ## Editing
 
 Every change is written to the database about a second after you stop making
@@ -88,7 +114,7 @@ draw for the new one.
 `src/systems/dolmenwood/` holds Dolmenwood's own tables and the values that
 follow from them: saving throws, skill targets, attack bonus, magic resistance,
 experience thresholds and the experience modifier, hit points per level, armour
-class, and the list of loadouts the kit allows. Character in, computed values
+class, the list of loadouts the kit allows, and Speed from slot encumbrance. Character in, computed values
 out. Nothing in there reads the page or the character file.
 
 Values are recorded or computed, never both. Ability scores and the hit die you
@@ -97,9 +123,8 @@ them, so changing your level moves all of it at once.
 
 The tables are transcribed from the [online rules
 reference](https://www.dolmenwood.necroticgnome.com/rules/), with the page id
-noted above each one. One number is not: the grimalkin maximum level of 14 is
-carried over from the sheet this project started from, because the kindred page
-does not state it.
+noted above each one. A character's maximum level is the last row of the class
+table; Dolmenwood kindreds carry no level limit of their own.
 
 ```
 npm run check   type check, then the tests

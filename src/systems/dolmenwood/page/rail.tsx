@@ -13,6 +13,7 @@ import {
   type SheetProps,
 } from "./shared.ts";
 import type { SaveKind, Skill } from "../types.ts";
+import { Notes } from "./notes.tsx";
 
 export function Abilities({ character, computed, patch, editing }: SheetProps) {
   const primes = characterClass(character).primeAbilities;
@@ -79,6 +80,7 @@ export function Abilities({ character, computed, patch, editing }: SheetProps) {
           follows from it.
         </p>
       ) : null}
+      <Notes at="abilities" />
     </section>
   );
 }
@@ -88,6 +90,7 @@ export function Combat({ character, computed, patch, editing }: SheetProps) {
   const low = Math.min(...armourClasses);
   const high = Math.max(...armourClasses);
   const kin = kindred(character);
+  const enc = computed.encumbrance;
   const con = computed.abilityModifiers.con;
   const pips = Math.min(Math.max(character.hp, 0), 12);
   const klass = characterClass(character);
@@ -119,6 +122,8 @@ export function Combat({ character, computed, patch, editing }: SheetProps) {
           </dd>
         </div>
 
+        <Notes at="combat.hitPoints" />
+
         <div class="stat">
           <dt>Armour class</dt>
           <dd class="big">
@@ -130,6 +135,25 @@ export function Combat({ character, computed, patch, editing }: SheetProps) {
             </small>
           </dd>
         </div>
+
+        <Notes at="combat.armourClass" />
+
+        <div class="stat">
+          <dt>Speed</dt>
+          <dd class="big">
+            {enc.speed}
+            <small>
+              slot encumbrance: {enc.equipped} of {enc.equippedLimit} equipped, {enc.stowed} of{" "}
+              {enc.stowedLimit} stowed
+              <br />
+              {enc.over
+                ? `over the ${enc.over} limit; something has to go`
+                : `equipped alone gives ${enc.equippedSpeed}, stowed alone ${enc.stowedSpeed}; the slower wins`}
+            </small>
+          </dd>
+        </div>
+
+        <Notes at="combat.speed" />
 
         <div class="stat">
           <dt>Attack bonus</dt>
@@ -194,6 +218,7 @@ export function SavingThrows({ computed }: SheetProps) {
         ))}
       </dl>
       <p class="note">Roll d20, meet or beat the target.</p>
+      <Notes at="saves" />
     </section>
   );
 }
@@ -228,6 +253,7 @@ export function Skills({ computed }: SheetProps) {
         Everything defaults to a target of 6 unless your kindred or class lowers it, and the
         targets above say which did.
       </p>
+      <Notes at="skills" />
     </section>
   );
 }
@@ -253,6 +279,7 @@ export function Particulars({ character }: SheetProps) {
           </dd>
         </div>
       </dl>
+      <Notes at="particulars" />
     </section>
   );
 }

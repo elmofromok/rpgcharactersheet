@@ -12,8 +12,8 @@
     "Woldish",
     "Mewl"
   ],
-  "level": 1,
-  "xp": 0,
+  "level": 2,
+  "xp": 2250,
   "abilities": {
     "str": 12,
     "int": 9,
@@ -23,17 +23,85 @@
     "cha": 11
   },
   "hitDice": [
-    4
+    8,
+    8
   ],
   "glamour": "fools-gold",
-  "hp": 2,
+  "hp": 11,
   "gold": 5,
-  "arrows": 20,
+  "arrows": 19,
   "wilder": false,
   "coins": 0,
   "trophies": [],
   "journal": "",
-  "notes": [],
+  "notes": [
+    {
+      "id": "page-top-level-two",
+      "anchor": "page.top",
+      "tone": "aside",
+      "body": "Levelled to 2 on 3 October 2026, on 2,250 XP. Level 1 was corrected the same day to the full 6 hit points, and the level 2 die came up 8, so the maximum is 12. Survival improved to a target of 4 and wilder form is reachable at last. Attack bonus, saves and armour class do not move until level 3. The death’s door question for your referee still stands; it just matters a good deal less than it did."
+    },
+    {
+      "id": "abilities-constitution",
+      "anchor": "abilities",
+      "tone": "warning",
+      "body": "**Constitution 5 is the defining fact of this character.** You lose 2 hit points per level for the whole of your career, so the two 8s behind your 12 hit points were worth 6 each rather than 8. It also costs you 20% of all XP earned, because Constitution is one of the hunter’s two prime abilities.\n\nTwelve hit points is survivable, not safe. Two sword hits still take most of them. Stay at bowshot. Let the animal companion scout. Do not be the one who opens the door."
+    },
+    {
+      "id": "abilities-creation-step-4",
+      "anchor": "abilities",
+      "tone": "aside",
+      "body": "Rolled straight down, kept as rolled. If you ever want it, creation step 4 lets you drop a non-prime score by 2 to raise a prime by 1, with a floor of 9. Strength 12→9 and Wisdom 10→9 would buy Constitution up to 7, halving both the hit point loss and the XP penalty, and neither score would change its modifier."
+    },
+    {
+      "id": "speed-the-shield",
+      "anchor": "combat.speed",
+      "tone": "aside",
+      "body": "Six equipped slots is what puts you on 20. The shield is one of them, and you only hold it when the bow is away. Stow it in the pack and you are on 5 slots and Speed 30; the price is that it has to come out again before a melee, not during one. The sledgehammer and shovel ride in the pack and cost you nothing yet, but they are the first things to drop when the pack fills.\n\nTwo referee rulings, 3 October 2026: worn clothes take no slot, and the sledgehammer is one slot like any other object."
+    },
+    {
+      "id": "kit-starting-gear",
+      "anchor": "kit",
+      "tone": "aside",
+      "body": "The clothes, backpack and belt pouch are what every character starts with. The armour, shield, bow and dagger are a legal hunter equipment roll. Custom-fitted armour for a grimalkin takes `2d6` days to make or alter."
+    },
+    {
+      "id": "kit-barrow-digging",
+      "anchor": "kit",
+      "tone": "aside",
+      "body": "Chisel, sledgehammer, shovel, ink and quill. That is a barrow-digging kit with a notebook attached, in a wood named after its standing stones. Play it as deliberate. It all rides in the pack, which is why it costs you no Speed yet; the pack has room for seven more slots before it does."
+    },
+    {
+      "id": "kit-whistle",
+      "anchor": "kit",
+      "tone": "aside",
+      "body": "The whistle is audible to every living thing except dogs. Nobody has yet found the use for it. Somebody will."
+    },
+    {
+      "id": "wilder-trigger-level-two",
+      "anchor": "kindred.wilder",
+      "tone": "aside",
+      "body": "With 12 maximum hit points the trigger is 5 or fewer, and the rules also want you in melee when you change. So the sequence is: something gets close enough to hurt you, it does, and then you turn. Not before."
+    },
+    {
+      "id": "glamour-not-a-fight",
+      "anchor": "kindred.glamour",
+      "tone": "aside",
+      "body": "Worth saying plainly: this does nothing in a fight. It is a swindler’s tool with a `1d6` minute fuse, which means the plan has to include being somewhere else when it lapses."
+    },
+    {
+      "id": "companion-front-line",
+      "anchor": "class.companion",
+      "tone": "aside",
+      "body": "With your hit points this is the closest thing you have to a front line, so choose something that can take a hit."
+    },
+    {
+      "id": "appearance-violet-fur",
+      "anchor": "page.appearance",
+      "tone": "plain",
+      "body": "Violet fur, a snub nose, and ear tufts nobody would call modest. The black wools do nothing for your armour class and a great deal for your outline after dark. Ask your referee whether they are worth something on a Stalking roll at night; the rules do not say, and most referees will give you it.\n\nFastidious is the word people use. You groom before a fight and again after it, and you will not sleep in a wet cloak. Keep playing that. A habit the referee can reach for is worth more at the table than a line on the sheet."
+    }
+  ],
   "kit": [
     {
       "n": "Leather armour, cut down to a cat’s frame",
@@ -58,11 +126,9 @@
     },
     {
       "n": "Common clothes, under jet black wools",
-      "t": ""
-    },
-    {
-      "n": "Backpack: 2 preserved rations, waterskin, tinder box",
-      "t": ""
+      "t": "worn",
+      "where": "equipped",
+      "slots": 0
     },
     {
       "n": "Belt pouch",
@@ -71,6 +137,24 @@
     },
     {
       "n": "A whistle only dogs cannot hear",
+      "t": "",
+      "where": "equipped"
+    },
+    {
+      "n": "Backpack",
+      "t": "holds the stowed lines"
+    },
+    {
+      "n": "Preserved rations, 2 days",
+      "t": "",
+      "slots": 2
+    },
+    {
+      "n": "Waterskin",
+      "t": ""
+    },
+    {
+      "n": "Tinder box",
       "t": ""
     },
     {
@@ -83,7 +167,8 @@
     },
     {
       "n": "Ink, quill, 5 sheets of paper",
-      "t": "no. 8"
+      "t": "no. 8",
+      "slots": 1
     },
     {
       "n": "Shovel",

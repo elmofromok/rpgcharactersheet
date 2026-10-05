@@ -73,6 +73,21 @@ Every number on the sheet is one or the other. Nothing is both.
   two hands and the shield needs an arm, so bow-and-shield is not a loadout.
   Each loadout has its own armour class.
 
+**Slot**
+: One unit of carrying room under Dolmenwood's slot encumbrance. Every object
+  is one slot unless the book says otherwise: armour by bulk, two-handed melee
+  weapons two, bundles one, tiny things none, a container in use none.
+
+**Equipped**
+: A kit item worn, held, or ready at short notice. Ten slots of these.
+
+**Stowed**
+: A kit item packed away in a container. Sixteen slots of these.
+
+**Speed**
+: How far the character moves, computed from the kit. Equipped and stowed
+  slots each give a Speed, and the slower one applies.
+
 **Trophy**
 : Something taken from a kill. Grants combat bonuses later.
 
@@ -86,6 +101,22 @@ Every number on the sheet is one or the other. Nothing is both.
 : The named place on the sheet where a note attaches. A rule anchor puts the
   note directly beneath the rule it qualifies. A page anchor holds notes that
   qualify no rule.
+
+## Looking back
+
+**Past level**
+: The character as last saved at an earlier level. Read from the change log,
+  never stored on its own; the newest revision at that level is the one shown.
+
+**Looking back**
+: The sheet showing a past level. The whole sheet, read only, with a way back
+  to the live character.
+  _Avoid_: history mode, time travel, snapshot
+
+**Level up**
+: The act of closing one level and opening the next: the hit die rolled, the
+  level raised, the experience banked. Not a thing stored; a change like any
+  other.
 
 ## Dolmenwood terms
 
