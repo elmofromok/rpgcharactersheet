@@ -77,7 +77,7 @@ function LevelControl({
 
   return (
     <details class="levels" ref={menu}>
-      <summary aria-label="Choose a level to look back at">
+      <summary title="Choose a level to look back at">
         Level {character.level}
         {at ? ` of ${highest}` : ""} <span aria-hidden="true">▾</span>
       </summary>
