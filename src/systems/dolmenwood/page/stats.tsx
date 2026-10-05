@@ -1,8 +1,9 @@
-// The left rail: the numbers you look up rather than change. Every one of
-// them is computed, so levelling moves all of them at once.
+// The numbers you look up rather than change. Every one of them is computed,
+// so levelling moves all of them at once.
 
 import { characterClass, kindred } from "../rules.ts";
 import {
+  ABILITY_CAPTIONS,
   ABILITY_NAMES,
   ABILITY_ORDER,
   SAVE_NAMES,
@@ -18,59 +19,50 @@ import { Notes } from "./notes.tsx";
 export function Abilities({ character, computed, patch, editing }: SheetProps) {
   const primes = characterClass(character).primeAbilities;
 
+  // Six cells across, as on the paper sheet: score and modifier in each, and
+  // under them one line saying what the modifier feeds.
   return (
     <section class="card">
       <h2>Ability scores</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Ability</th>
-            <th>Score</th>
-            <th>Mod</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ABILITY_ORDER.map((ability) => {
-            const modifier = computed.abilityModifiers[ability];
-            const classes = [
-              primes.includes(ability) ? "prime" : "",
-              modifier < 0 ? "flag" : "",
-            ]
-              .filter(Boolean)
-              .join(" ");
-            return (
-              <tr key={ability} class={classes || undefined}>
-                <td>{ABILITY_NAMES[ability]}</td>
-                <td>
-                  {editing ? (
-                    <input
-                      class="score"
-                      type="number"
-                      inputMode="numeric"
-                      value={character.abilities[ability]}
-                      aria-label={ABILITY_NAMES[ability]}
-                      onInput={(e) =>
-                        patch({
-                          abilities: {
-                            ...character.abilities,
-                            [ability]: toNumber(
-                              e.currentTarget.value,
-                              character.abilities[ability],
-                            ),
-                          },
-                        })
-                      }
-                    />
-                  ) : (
-                    character.abilities[ability]
-                  )}
-                </td>
-                <td class={modifier === 0 ? "same" : undefined}>{sign(modifier)}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <ul class="abilities">
+        {ABILITY_ORDER.map((ability) => {
+          const modifier = computed.abilityModifiers[ability];
+          const classes = [
+            primes.includes(ability) ? "prime" : "",
+            modifier < 0 ? "flag" : "",
+          ]
+            .filter(Boolean)
+            .join(" ");
+          return (
+            <li key={ability} class={classes || undefined}>
+              <span class="ability">{ABILITY_NAMES[ability]}</span>
+              <span class="figures">
+                {editing ? (
+                  <input
+                    class="score"
+                    type="number"
+                    inputMode="numeric"
+                    value={character.abilities[ability]}
+                    aria-label={ABILITY_NAMES[ability]}
+                    onInput={(e) =>
+                      patch({
+                        abilities: {
+                          ...character.abilities,
+                          [ability]: toNumber(e.currentTarget.value, character.abilities[ability]),
+                        },
+                      })
+                    }
+                  />
+                ) : (
+                  <span class="score">{character.abilities[ability]}</span>
+                )}
+                <span class={modifier === 0 ? "mod same" : "mod"}>{sign(modifier)}</span>
+              </span>
+              <small>{ABILITY_CAPTIONS[ability]}</small>
+            </li>
+          );
+        })}
+      </ul>
       <p class="note">
         Ability checks are d6 plus that ability's modifier against a fixed target of 4.
       </p>

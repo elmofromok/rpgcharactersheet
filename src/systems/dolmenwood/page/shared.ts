@@ -56,6 +56,20 @@ export const ABILITY_NAMES: Record<Ability, string> = {
 
 export const ABILITY_ORDER: Ability[] = ["str", "int", "wis", "dex", "con", "cha"];
 
+/**
+ * What each modifier feeds, per the Online Rules Reference. The paper sheet
+ * says "reaction rolls" for Charisma; the reference says retainers, and the
+ * sheet is built from the reference.
+ */
+export const ABILITY_CAPTIONS: Record<Ability, string> = {
+  str: "melee attacks and damage",
+  int: "extra languages",
+  wis: "magic resistance",
+  dex: "armour class and missile attacks",
+  con: "hit points per level",
+  cha: "retainers and loyalty",
+};
+
 export const SAVE_NAMES: Record<SaveKind, string> = {
   doom: "Doom",
   ray: "Ray",
