@@ -20,11 +20,19 @@ export function characterFilePath(id: string): string {
  * The character as the page should see it: the saved document, topped up from
  * the character file and then the system defaults for anything it predates.
  * A character with no file left is already whole and is returned as it stands.
+ *
+ * With a revision, the character as it stood then, topped up the same way, so
+ * a row written before a field existed draws like any other.
  */
-export function loadCharacter(store: Store, id: string): CharacterDocument | null {
+export function loadCharacter(
+  store: Store,
+  id: string,
+  revision?: number,
+): CharacterDocument | null {
   if (!isCharacterId(id)) return null;
 
-  const stored = store.read(id);
+  const stored = revision === undefined ? store.read(id) : store.readAt(id, revision);
+  if (!stored) return null;
   const path = characterFilePath(id);
   if (!existsSync(path)) return stored;
 

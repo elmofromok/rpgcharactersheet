@@ -127,6 +127,58 @@ describe("revisions", () => {
   });
 });
 
+describe("levels", () => {
+  test("one entry per level, with the revision that stands for it", () => {
+    const call = api();
+    call("PUT", "/api/characters/test-cat", cat({ level: 1 }));
+    call("PUT", "/api/characters/test-cat", cat({ level: 1, hp: 1 }));
+    call("PUT", "/api/characters/test-cat", cat({ level: 2, xp: 2250 }));
+
+    const response = call("GET", "/api/characters/test-cat/levels");
+    assert.equal(response.status, 200);
+    const levels = response.body as Array<{ level: number; revision: number; writtenAt: string }>;
+    assert.deepEqual(
+      levels.map(({ level, revision }) => ({ level, revision })),
+      [
+        { level: 1, revision: 2 },
+        { level: 2, revision: 3 },
+      ],
+    );
+    assert.ok(levels[0]?.writtenAt);
+  });
+
+  test("a past level reads back through its revision", () => {
+    const call = api();
+    call("PUT", "/api/characters/test-cat", cat({ level: 1, hp: 1 }));
+    call("PUT", "/api/characters/test-cat", cat({ level: 2, hp: 9 }));
+
+    const [first] = call("GET", "/api/characters/test-cat/levels").body as Array<{ revision: number }>;
+    const then = call("GET", `/api/characters/test-cat/revisions/${first!.revision}`)
+      .body as CharacterDocument;
+    assert.equal(then.level, 1);
+    assert.equal(then.hp, 1);
+  });
+
+  test("a past revision is topped up like the live one", () => {
+    const call = api();
+    const { height: _drop, ...older } = cat({ id: "moggle-fluff-a-kin" });
+    call("PUT", "/api/characters/moggle-fluff-a-kin", older);
+    call("PUT", "/api/characters/moggle-fluff-a-kin", cat({ id: "moggle-fluff-a-kin", level: 2 }));
+
+    const then = call("GET", "/api/characters/moggle-fluff-a-kin/revisions/1").body as CharacterDocument;
+    assert.equal(then.level, 1);
+    assert.equal(then.height, "3′6″");
+  });
+
+  test("a character nobody has saved has no levels", () => {
+    assert.deepEqual(api()("GET", "/api/characters/nobody/levels").body, []);
+  });
+
+  test("the levels are read only", () => {
+    assert.equal(api()("PUT", "/api/characters/test-cat/levels", []).status, 404);
+  });
+});
+
 describe("everything else", () => {
   test("a method the endpoint does not have is a 405", () => {
     const call = api();
