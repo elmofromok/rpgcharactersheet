@@ -12,8 +12,11 @@ import type { Ability, SaveKind, Skill } from "../types.ts";
  * changed. The play tracker and the kit ignore it: those are always live,
  * because a toggle in front of your hit points is a toggle you would leave on.
  *
- * `readOnly` is the lock a past level is drawn under. It freezes everything,
- * the tracker and the kit included, and `editing` is never on beside it.
+ * `readOnly` says a past level is drawn. The lock itself is not this flag: the
+ * sheet puts everything below the masthead in a disabled fieldset, and the
+ * stylesheet hides what adds, drops or acts under `.looking-back`. The flag is
+ * for the few places that draw a value as plain text rather than as a dead
+ * control, and for the way back. `editing` is never on beside it.
  */
 export type SheetProps = {
   character: CharacterDocument;

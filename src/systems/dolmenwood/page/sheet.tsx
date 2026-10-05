@@ -249,7 +249,11 @@ export function Sheet({
         <Notes at="page.top" />
         <Divider />
 
-        <div class="layout">
+        {/* A past level is drawn under a lock: one disabled fieldset around
+            everything below the masthead, so every control in it, present or
+            future, is dead without being told. The masthead stays live for
+            the way back. */}
+        <fieldset class="layout" disabled={readOnly}>
           <div class="left">
             <Tracker {...props} />
           </div>
@@ -283,7 +287,7 @@ export function Sheet({
               </div>
             </div>
           </div>
-        </div>
+        </fieldset>
 
         <Divider flip />
 

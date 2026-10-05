@@ -1,7 +1,9 @@
 // The play tracker: the values that move most during a session, always live.
 // No edit toggle guards any of this, because a toggle in front of your hit
 // points is a toggle you would leave on. The one lock it honours is a past
-// level, which is read only: the numbers stay, the controls go.
+// level, which is read only: the numbers stay, the controls go. The sheet
+// disables and hides the controls; this file only draws the numbers and the
+// journal as text instead of as dead inputs.
 
 import { useState } from "preact/hooks";
 
@@ -161,7 +163,6 @@ export function Tracker({ character, computed, patch, status, readOnly }: SheetP
             <input
               type="checkbox"
               checked={character.wilder}
-              disabled={readOnly}
               onChange={(e) => patch({ wilder: e.currentTarget.checked })}
             />
             Wilder form used
@@ -175,37 +176,35 @@ export function Tracker({ character, computed, patch, status, readOnly }: SheetP
               <div class="flagline">
                 {glamour.name}: {character.coins} of {capped} coins glamoured
               </div>
-              {readOnly ? null : (
-                <div class="inline">
-                  <button
-                    class="act"
-                    type="button"
-                    onClick={() =>
-                      patch({ coins: Math.min(capped, character.coins + glamour.coinsPerLevel) })
-                    }
-                  >
-                    +{glamour.coinsPerLevel} coins
-                  </button>
-                  <button
-                    class="act"
-                    type="button"
-                    onClick={() =>
-                      patch({ coins: Math.max(0, character.coins - glamour.coinsPerLevel) })
-                    }
-                  >
-                    &minus;{glamour.coinsPerLevel}
-                  </button>
-                  <button
-                    class="act"
-                    type="button"
-                    onClick={() => patch({ wilder: false, coins: 0 })}
-                  >
-                    New day
-                  </button>
-                </div>
-              )}
+              <div class="inline">
+                <button
+                  class="act"
+                  type="button"
+                  onClick={() =>
+                    patch({ coins: Math.min(capped, character.coins + glamour.coinsPerLevel) })
+                  }
+                >
+                  +{glamour.coinsPerLevel} coins
+                </button>
+                <button
+                  class="act"
+                  type="button"
+                  onClick={() =>
+                    patch({ coins: Math.max(0, character.coins - glamour.coinsPerLevel) })
+                  }
+                >
+                  &minus;{glamour.coinsPerLevel}
+                </button>
+                <button
+                  class="act"
+                  type="button"
+                  onClick={() => patch({ wilder: false, coins: 0 })}
+                >
+                  New day
+                </button>
+              </div>
             </>
-          ) : readOnly ? null : (
+          ) : (
             <div class="inline">
               <button class="act" type="button" onClick={() => patch({ wilder: false, coins: 0 })}>
                 New day
@@ -213,27 +212,25 @@ export function Tracker({ character, computed, patch, status, readOnly }: SheetP
             </div>
           )}
 
-          {readOnly ? null : (
-            <div class="inline">
-              <input
-                type="number"
-                inputMode="numeric"
-                placeholder="xp awarded"
-                value={award}
-                onInput={(e) => setAward(e.currentTarget.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    bank();
-                  }
-                }}
-              />
-              <button class="act" type="button" onClick={bank}>
-                Bank at{" "}
-                {computed.xpModifier === 0 ? "par" : `${Math.round(computed.xpModifier * 100)}%`}
-              </button>
-            </div>
-          )}
+          <div class="inline">
+            <input
+              type="number"
+              inputMode="numeric"
+              placeholder="xp awarded"
+              value={award}
+              onInput={(e) => setAward(e.currentTarget.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  bank();
+                }
+              }}
+            />
+            <button class="act" type="button" onClick={bank}>
+              Bank at{" "}
+              {computed.xpModifier === 0 ? "par" : `${Math.round(computed.xpModifier * 100)}%`}
+            </button>
+          </div>
         </div>
 
         <div>
@@ -243,42 +240,38 @@ export function Tracker({ character, computed, patch, status, readOnly }: SheetP
               {character.trophies.map((taken, index) => (
                 <li key={`${taken}-${index}`}>
                   <span>{taken}</span>
-                  {readOnly ? null : (
-                    <button
-                      type="button"
-                      aria-label={`remove ${taken}`}
-                      onClick={() =>
-                        patch({ trophies: character.trophies.filter((_, i) => i !== index) })
-                      }
-                    >
-                      &times;
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    aria-label={`remove ${taken}`}
+                    onClick={() =>
+                      patch({ trophies: character.trophies.filter((_, i) => i !== index) })
+                    }
+                  >
+                    &times;
+                  </button>
                 </li>
               ))}
             </ul>
           ) : (
             <p class="empty">Nothing taken yet.</p>
           )}
-          {readOnly ? null : (
-            <div class="inline">
-              <input
-                type="text"
-                placeholder="what you took, and from what"
-                value={trophy}
-                onInput={(e) => setTrophy(e.currentTarget.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addTrophy();
-                  }
-                }}
-              />
-              <button class="act" type="button" onClick={addTrophy}>
-                Add
-              </button>
-            </div>
-          )}
+          <div class="inline">
+            <input
+              type="text"
+              placeholder="what you took, and from what"
+              value={trophy}
+              onInput={(e) => setTrophy(e.currentTarget.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  addTrophy();
+                }
+              }}
+            />
+            <button class="act" type="button" onClick={addTrophy}>
+              Add
+            </button>
+          </div>
         </div>
 
         <div>

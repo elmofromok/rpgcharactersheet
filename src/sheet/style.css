@@ -71,6 +71,10 @@ body {
   gap: 36px;
   align-items: start;
   margin-top: 30px;
+  /* It is a fieldset, so a past level can disable it whole. Undo the box. */
+  border: 0;
+  padding: 0;
+  min-width: 0;
 }
 .right {
   min-width: 0;
@@ -336,14 +340,10 @@ dl {
   border-color: var(--accent);
   color: var(--accent);
 }
-.kit .place[aria-pressed="true"],
-.kit .place.held {
+.kit .place[aria-pressed="true"] {
   border-color: var(--accent);
   background: var(--accent-wash);
   color: var(--accent);
-}
-.looking-back .kit .place {
-  cursor: default;
 }
 .kit .unrated {
   font-style: italic;
@@ -1017,6 +1017,32 @@ input.die {
   --line: #3d3221;
   --accent: #d8a660;
   --accent-wash: #33270f;
+}
+
+/* Under the lock every control in the body is disabled by the fieldset.
+   Whatever adds, drops or acts is hidden; whatever holds a value reads as the
+   value, in ink, with nothing to say it was ever an input. */
+.looking-back .inline,
+.looking-back .drop,
+.looking-back .trophies li button,
+.looking-back .howto {
+  display: none;
+}
+.looking-back :disabled {
+  color: inherit;
+  -webkit-text-fill-color: inherit;
+  opacity: 1;
+  cursor: default;
+  pointer-events: none;
+}
+.looking-back .kit input::placeholder {
+  color: transparent;
+}
+.looking-back .kit .place {
+  color: var(--soft);
+}
+.looking-back .kit .place[aria-pressed="true"] {
+  color: var(--accent);
 }
 
 /* The level in the eyebrow, and the list it drops. It inherits the eyebrow's
