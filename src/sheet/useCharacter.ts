@@ -45,7 +45,8 @@ export type Loaded = {
 /** What a past level gets instead of a patch. Nothing is routed to the database. */
 const ignore: Patch = () => {};
 
-type Past = { entry: LevelEntry; document: CharacterDocument };
+/** A past revision as fetched. Which level it stands for is the list's to say. */
+type Past = { revision: number; document: CharacterDocument };
 
 export function useCharacter(id: string | null, level: number | null): Loaded {
   const [character, setCharacter] = useState<CharacterDocument | null>(null);
@@ -159,9 +160,13 @@ export function useCharacter(id: string | null, level: number | null): Loaded {
       ? `No level ${level} in this character's history.`
       : null;
 
+  // Keyed on the revision number, not the entry: every save replaces the list
+  // and with it the entry object, and the same revision need not be fetched
+  // twice.
+  const revision = entry?.revision ?? null;
   useEffect(() => {
     setPastProblem(null);
-    if (!entry) {
+    if (revision === null) {
       setPast(null);
       return;
     }
@@ -170,8 +175,8 @@ export function useCharacter(id: string | null, level: number | null): Loaded {
     let stale = false;
     void (async () => {
       try {
-        const document = await fetchRevision(current.id, entry.revision);
-        if (!stale) setPast({ entry, document });
+        const document = await fetchRevision(current.id, revision);
+        if (!stale) setPast({ revision, document });
       } catch (err) {
         if (!stale) setPastProblem(err instanceof Error ? err.message : String(err));
       }
@@ -179,7 +184,7 @@ export function useCharacter(id: string | null, level: number | null): Loaded {
     return () => {
       stale = true;
     };
-  }, [entry]);
+  }, [revision]);
 
   // Closing the tab or switching away should not cost the last few seconds.
   useEffect(() => {
@@ -205,10 +210,10 @@ export function useCharacter(id: string | null, level: number | null): Loaded {
     };
   }
 
-  // A past level still on its way, or one from a different level than the URL
-  // now names, is not drawn: the page waits rather than flash the live sheet
-  // with its controls live.
-  const shown = past && past.entry.level === level ? past : null;
+  // A past level still on its way, or one from a different revision than the
+  // URL's level now stands for, is not drawn: the page waits rather than flash
+  // the live sheet with its controls live.
+  const shown = past && entry && past.revision === entry.revision ? past : null;
   return {
     character: shown?.document ?? null,
     // A live save that failed is not hidden behind "read only": the edit is
@@ -217,7 +222,7 @@ export function useCharacter(id: string | null, level: number | null): Loaded {
     problem: problem ?? pastProblem ?? missing,
     patch: ignore,
     levels: levels ?? [],
-    lookingAt: shown?.entry ?? null,
+    lookingAt: shown ? entry : null,
     nowLevel: character?.level ?? null,
   };
 }
