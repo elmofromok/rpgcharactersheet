@@ -54,9 +54,15 @@ export function Abilities({ character, computed, patch, editing }: SheetProps) {
                     }
                   />
                 ) : (
-                  <span class="score">{character.abilities[ability]}</span>
+                  <span class="score">
+                    <span class="sr">score </span>
+                    {character.abilities[ability]}
+                  </span>
                 )}
-                <span class={modifier === 0 ? "mod same" : "mod"}>{sign(modifier)}</span>
+                <span class={modifier === 0 ? "mod same" : "mod"}>
+                  <span class="sr">modifier </span>
+                  {sign(modifier)}
+                </span>
               </span>
               <small>{ABILITY_CAPTIONS[ability]}</small>
             </li>

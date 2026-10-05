@@ -76,9 +76,6 @@ body {
   padding: 0;
   min-width: 0;
 }
-.right {
-  min-width: 0;
-}
 @media (max-width: 1180px) {
   .layout {
     grid-template-columns: 1fr;
@@ -129,16 +126,21 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 22px;
+  min-width: 0;
+  /* The bands fold on this column's own width, not the viewport's, so a
+     narrow column beside the tracker folds the same as a narrow phone. */
+  container: right / inline-size;
 }
 .band {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* minmax(0, …), or a card's widest line would grow its track past the column. */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 22px;
   align-items: start;
 }
-@media (max-width: 720px) {
+@container right (width < 680px) {
   .band {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -205,7 +207,8 @@ h1 {
 
 /* ---- ability row ----
    Six cells across, as on paper. Three across where six would crush the
-   captions, two on a phone. */
+   captions, two on a phone. Each range is bounded, so no rule undoes
+   another; the first cell of every row loses its left border. */
 .abilities {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
@@ -259,7 +262,9 @@ h1 {
 .abilities .mod.same {
   color: var(--soft);
 }
-.abilities .flag .mod {
+/* A negative modifier: score and modifier in the warning colour, as the old
+   table's whole row was. The name and caption stay in ink. */
+.abilities .flag .figures {
   color: var(--warn);
   font-weight: 600;
 }
@@ -268,7 +273,15 @@ h1 {
   line-height: 1.35;
   color: var(--soft);
 }
-@media (max-width: 1180px) {
+.abilities .sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@container right (440px <= width < 900px) {
   .abilities {
     grid-template-columns: repeat(3, 1fr);
     row-gap: 16px;
@@ -278,13 +291,10 @@ h1 {
     border-left: none;
   }
 }
-@media (max-width: 560px) {
+@container right (width < 440px) {
   .abilities {
     grid-template-columns: repeat(2, 1fr);
-  }
-  .abilities li:nth-child(3n + 1) {
-    padding-left: 14px;
-    border-left: 1px solid var(--line);
+    row-gap: 16px;
   }
   .abilities li:nth-child(odd) {
     padding-left: 0;
@@ -690,10 +700,9 @@ input.fact {
   padding: 1px 5px;
 }
 input.score {
-  width: 5ch;
+  width: 3ch;
   text-align: right;
   font-family: var(--data);
-  font-size: 18px;
   background: var(--ground);
   border: 1px solid var(--line);
   border-radius: 3px;
