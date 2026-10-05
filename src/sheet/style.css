@@ -828,7 +828,8 @@ input.die {
   border-bottom-color: var(--accent);
   outline: none;
 }
-.kit input.kit-n {
+/* The name, as an input or as the plain text a past level shows. */
+.kit .kit-n {
   flex: 1;
   min-width: 0;
 }
