@@ -175,7 +175,7 @@ describe("levels", () => {
   });
 
   test("the levels are read only", () => {
-    assert.equal(api()("PUT", "/api/characters/test-cat/levels", []).status, 404);
+    assert.equal(api()("PUT", "/api/characters/test-cat/levels", []).status, 405);
   });
 });
 
@@ -184,6 +184,8 @@ describe("everything else", () => {
     const call = api();
     assert.equal(call("DELETE", "/api/characters/test-cat").status, 405);
     assert.equal(call("PUT", "/api/characters").status, 405);
+    assert.equal(call("PUT", "/api/characters/test-cat/revisions", []).status, 405);
+    assert.equal(call("DELETE", "/api/characters/test-cat/revisions/1").status, 405);
   });
 
   test("an endpoint that does not exist is a 404", () => {
